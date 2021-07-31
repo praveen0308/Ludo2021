@@ -212,6 +212,13 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
 //        path.close()
 //
 //        canvas.drawPath(path, redPaint)
+
+        val pointA = Point()
+        val pointB = Point()
+        val pointC = Point()
+        val pointD = Point()
+        val pointE = Point()
+
     }
 
     private fun drawTriangle(
