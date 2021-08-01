@@ -1,14 +1,17 @@
 package com.jmm.brsap.ludo2021
 
+import android.R.attr
 import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
 import android.view.View
+import androidx.core.content.ContextCompat
+
 
 class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
 
     private lateinit var paint: Paint
-    private lateinit var pathPaint: Paint
+    private lateinit var borderPaint: Paint
     private lateinit var yellowPaint: Paint
     private lateinit var redPaint: Paint
     private lateinit var greenPaint: Paint
@@ -29,9 +32,11 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
         prepareScreenDimensions()
+        initializePainter()
         createPlayerAreas(canvas)
         generatePaths(canvas)
         drawCentralHomeView(canvas)
+        generateSafePoints(canvas)
 
     }
 
@@ -48,8 +53,51 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
         topSpacing = (mHeight - mWidth) / 2
         bottomSpacing = (mWidth + mWidth) / 2
 
+
+    }
+
+    private fun initializePainter(){
+
         // Initializing paint object
-        paint = Paint()
+        paint= Paint()
+        borderPaint= Paint()
+
+        borderPaint.apply {
+            color = Color.BLACK
+            strokeWidth = 2f
+            style = Paint.Style.STROKE
+            isAntiAlias = false
+        }
+
+
+        redPaint = Paint(Paint.ANTI_ALIAS_FLAG)
+        redPaint.apply {
+            color = Color.RED
+            isAntiAlias = true
+            style = Paint.Style.FILL
+        }
+
+        bluePaint = Paint(Paint.ANTI_ALIAS_FLAG)
+        bluePaint.apply {
+            color = Color.BLUE
+            isAntiAlias = true
+            style = Paint.Style.FILL
+        }
+
+        yellowPaint = Paint(Paint.ANTI_ALIAS_FLAG)
+        yellowPaint.apply {
+            color = Color.YELLOW
+            isAntiAlias = true
+            style = Paint.Style.FILL
+        }
+
+        greenPaint = Paint(Paint.ANTI_ALIAS_FLAG)
+        greenPaint.apply {
+            color = Color.GREEN
+            isAntiAlias = true
+            style = Paint.Style.FILL
+        }
+
     }
 
     private fun createPlayerAreas(canvas: Canvas?) {
@@ -194,46 +242,90 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
     }
 
     private fun drawCentralHomeView(canvas: Canvas){
-        redPaint = Paint(Paint.ANTI_ALIAS_FLAG)
 
-        redPaint.apply {
-            color = Color.RED
-            isAntiAlias = true
-            style = Paint.Style.FILL
-        }
+        val x = d.toInt()
+        val pointA = Point(x*6,topSpacing+x*6)
+        val pointB = Point(x*9,topSpacing+x*6)
+        val pointC = Point(x*6,topSpacing+x*9)
+        val pointD = Point(x*9,topSpacing+x*9)
+        val pointE = Point((x*7.5).toInt(),(topSpacing+x*7.5).toInt())
 
-        drawTriangle((d*6).toInt(),(topSpacing+d*6).toInt(),(d*3).toInt(),(d*1.5).toInt(),true,redPaint,canvas)
-//        val path = Path()
-//        path.fillType = Path.FillType.EVEN_ODD
-//        path.moveTo(d*6, topSpacing+d*6)
-//        path.lineTo(d*9, topSpacing+d*9)
-//        path.lineTo(d*7, topSpacing+d*7)
-//        path.lineTo(d*6, topSpacing+d*6)
-//        path.close()
-//
-//        canvas.drawPath(path, redPaint)
+        drawTriangle(pointA,pointB,pointE,redPaint,canvas)
+        drawTriangle(pointA,pointC,pointE,greenPaint,canvas)
+        drawTriangle(pointC,pointD,pointE,yellowPaint,canvas)
+        drawTriangle(pointD,pointB,pointE,bluePaint,canvas)
+
     }
 
     private fun drawTriangle(
-        x: Int,
-        y: Int,
-        width: Int,
-        height: Int,
-        inverted: Boolean,
-        paint: Paint,
+        point1:Point,
+        point2:Point,
+        point3:Point,
+        mPaint: Paint,
         canvas: Canvas
     ) {
-        val p1 = Point(x, y)
-        val pointX = x + width / 2
-        val pointY = if (inverted) y + height else y - height
-        val p2 = Point(pointX, pointY)
-        val p3 = Point(x + width, y)
         val path = Path()
         path.fillType = Path.FillType.EVEN_ODD
-        path.moveTo(p1.x.toFloat(), p1.y.toFloat())
-        path.lineTo(p2.x.toFloat(), p2.y.toFloat())
-        path.lineTo(p3.x.toFloat(), p3.y.toFloat())
+        path.moveTo(point1.x.toFloat(), point1.y.toFloat())
+        path.lineTo(point2.x.toFloat(), point2.y.toFloat())
+        path.lineTo(point3.x.toFloat(), point3.y.toFloat())
         path.close()
-        canvas.drawPath(path, paint)
+        canvas.drawPath(path, mPaint)
+
+
+        val outLines = Path()
+        outLines.fillType = Path.FillType.EVEN_ODD
+        outLines.moveTo(point1.x.toFloat(), point1.y.toFloat())
+        outLines.lineTo(point2.x.toFloat(), point2.y.toFloat())
+        outLines.lineTo(point3.x.toFloat(), point3.y.toFloat())
+        outLines.close()
+        canvas.drawPath(outLines, borderPaint)
+    }
+
+    private fun generateSafePoints(canvas: Canvas){
+        val star = ContextCompat.getDrawable(context, R.drawable.ic_round_star_24)
+        star?.let {
+            val x = d.toInt()
+
+            //green side
+            canvas.drawRect(Rect(x, topSpacing+x*6, 2*x, topSpacing+x*7),greenPaint)
+            canvas.drawRect(Rect(x, topSpacing+x*6, 2*x, topSpacing+x*7),borderPaint)
+            it.setBounds(x, topSpacing+x*6, 2*x, topSpacing+x*7)
+            it.draw(canvas)
+
+            it.setBounds(x*2, topSpacing+x*8, 3*x, topSpacing+x*9)
+            it.draw(canvas)
+
+
+            //red side
+            it.setBounds(6*x, topSpacing+x*2, 7*x, topSpacing+x*3)
+            it.draw(canvas)
+
+            canvas.drawRect(Rect(8*x, topSpacing+x, 9*x, topSpacing+x*2),redPaint)
+            canvas.drawRect(Rect(8*x, topSpacing+x, 9*x, topSpacing+x*2),borderPaint)
+            it.setBounds(8*x, topSpacing+x, 9*x, topSpacing+x*2)
+            it.draw(canvas)
+
+
+            // blue side
+            it.setBounds(x*12, topSpacing+x*6, 13*x, topSpacing+x*7)
+            it.draw(canvas)
+
+            canvas.drawRect(Rect(x*13, topSpacing+x*8, 14*x, topSpacing+x*9),bluePaint)
+            canvas.drawRect(Rect(x*13, topSpacing+x*8, 14*x, topSpacing+x*9),borderPaint)
+            it.setBounds(x*13, topSpacing+x*8, 14*x, topSpacing+x*9)
+            it.draw(canvas)
+
+            // yellow side
+            canvas.drawRect(Rect(x*6, topSpacing+x*13, 7*x, topSpacing+x*14),yellowPaint)
+            canvas.drawRect(Rect(x*6, topSpacing+x*13, 7*x, topSpacing+x*14),borderPaint)
+            it.setBounds(x*6, topSpacing+x*13, 7*x, topSpacing+x*14)
+            it.draw(canvas)
+
+            it.setBounds(x*8, topSpacing+x*12, 9*x, topSpacing+x*13)
+            it.draw(canvas)
+
+        }
+
     }
 }
