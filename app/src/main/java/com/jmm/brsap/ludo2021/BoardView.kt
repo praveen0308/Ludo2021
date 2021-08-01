@@ -51,7 +51,7 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
         *
         * */
         topSpacing = (mHeight - mWidth) / 2
-        bottomSpacing = (mWidth + mWidth) / 2
+        bottomSpacing = (mHeight + mWidth) / 2
 
 
     }
@@ -107,7 +107,11 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
             color = Color.GREEN
             isAntiAlias = false
         }
+
         canvas!!.drawRect(
+            0f, topSpacing*1f, d*6, topSpacing+d*6, borderPaint
+        )
+        canvas.drawRect(
             0f, topSpacing*1f, d*6, topSpacing+d*6, paint
         )
 
@@ -116,6 +120,9 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
             color = Color.RED
             isAntiAlias = false
         }
+        canvas.drawRect(
+            d*9, topSpacing*1f, d*15, topSpacing+d*6, borderPaint
+        )
         canvas.drawRect(
             d*9, topSpacing*1f, d*15, topSpacing+d*6, paint
         )
@@ -126,6 +133,10 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
             isAntiAlias = false
         }
         canvas.drawRect(
+            d*9, topSpacing+d*9, d*15, topSpacing+d*15, borderPaint
+        )
+
+        canvas.drawRect(
             d*9, topSpacing+d*9, d*15, topSpacing+d*15, paint
         )
 
@@ -134,6 +145,9 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
             color = Color.YELLOW
             isAntiAlias = false
         }
+        canvas.drawRect(
+            0f, topSpacing+d*9, d*6, topSpacing+d*15, borderPaint
+        )
         canvas.drawRect(
             0f, topSpacing+d*9, d*6, topSpacing+d*15, paint
         )
