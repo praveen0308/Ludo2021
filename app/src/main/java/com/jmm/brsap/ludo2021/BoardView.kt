@@ -34,11 +34,9 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
         prepareScreenDimensions()
         initializePainter()
         createPlayerAreas(canvas)
-//        generateHomePaths(canvas)
         generatePaths(canvas)
-
-//        drawCentralHomeView(canvas)
-//        generateSafePoints(canvas)
+        drawCentralHomeView(canvas)
+        generateSafePoints(canvas)
 
     }
 
@@ -157,63 +155,101 @@ class BoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
 
     }
 
-    private fun generateHomePaths(canvas: Canvas){
-        //green home paths
-        for (j in 1..5){
-            canvas.drawRect(j*d, topSpacing+6*d+1*d, j*d+d, topSpacing+d*7+1*d, greenPaint)
-        }
-
-        // red home paths
-        for (j in 1..5){
-            canvas.drawRect(d*6+d, topSpacing+j*d, d*6+1*d+d, topSpacing+j*d+d, redPaint)
-        }
-
-        // blue home paths
-        for (j in 0..4){
-            canvas.drawRect(d*9+j*d, topSpacing+6*d+1*d, d*9+j*d+d, topSpacing+d*7+1*d, bluePaint)
-        }
-
-        // yellow home paths
-
-        for (j in 0..4){
-            canvas.drawRect(d*6+d, topSpacing+d*9+j*d, d*6+1*d+d, topSpacing+d*9+j*d+d, yellowPaint)
-        }
-    }
-
     private fun generatePaths(canvas: Canvas){
 
         // Making left side paths
+        paint.apply {
+            color = Color.GREEN
+            isAntiAlias = false
+            style = Paint.Style.FILL
+        }
+        for (j in 1..5){
+            canvas.drawRect(j*d, topSpacing+6*d+1*d, j*d+d, topSpacing+d*7+1*d, paint)
+        }
+
+        paint.apply {
+            color = Color.BLACK
+            strokeWidth = 2f
+            style = Paint.Style.STROKE
+            isAntiAlias = false
+        }
 
         for (i in 0..2){
             for (j in 0..5){
-                canvas.drawRect(j*d, topSpacing+6*d+i*d, j*d+d, topSpacing+d*7+i*d, borderPaint)
+                canvas.drawRect(j*d, topSpacing+6*d+i*d, j*d+d, topSpacing+d*7+i*d, paint)
             }
         }
 
         // Making right side paths
+        paint.apply {
+            color = Color.BLUE
+            isAntiAlias = false
+            style = Paint.Style.FILL
+        }
+        for (j in 0..4){
+            canvas.drawRect(d*9+j*d, topSpacing+6*d+1*d, d*9+j*d+d, topSpacing+d*7+1*d, paint)
+        }
+
+        paint.apply {
+            color = Color.BLACK
+            strokeWidth = 2f
+            style = Paint.Style.STROKE
+            isAntiAlias = false
+        }
 
         for (i in 0..2){
             for (j in 0..5){
-                canvas.drawRect(d*9+j*d, topSpacing+6*d+i*d, d*9+j*d+d, topSpacing+d*7+i*d, borderPaint)
+                canvas.drawRect(d*9+j*d, topSpacing+6*d+i*d, d*9+j*d+d, topSpacing+d*7+i*d, paint)
             }
         }
 
 
         // Making top side paths
+        paint.apply {
+            color = Color.RED
+            isAntiAlias = false
+            style = Paint.Style.FILL
+        }
 
+
+        for (j in 1..5){
+            canvas.drawRect(d*6+d, topSpacing+j*d, d*6+1*d+d, topSpacing+j*d+d, paint)
+        }
+        paint.apply {
+            color = Color.BLACK
+            strokeWidth = 2f
+            style = Paint.Style.STROKE
+            isAntiAlias = false
+        }
 
         for (i in 0..2){
             for (j in 0..5){
-                canvas.drawRect(d*6+i*d, topSpacing+j*d, d*6+i*d+d, topSpacing+j*d+d, borderPaint)
+                canvas.drawRect(d*6+i*d, topSpacing+j*d, d*6+i*d+d, topSpacing+j*d+d, paint)
             }
         }
 
 
         // Making bottom side paths
+        paint.apply {
+            color = Color.YELLOW
+            isAntiAlias = false
+            style = Paint.Style.FILL
+        }
+
+
+        for (j in 0..4){
+            canvas.drawRect(d*6+d, topSpacing+d*9+j*d, d*6+1*d+d, topSpacing+d*9+j*d+d, paint)
+        }
+        paint.apply {
+            color = Color.BLACK
+            strokeWidth = 2f
+            style = Paint.Style.STROKE
+            isAntiAlias = false
+        }
 
         for (i in 0..2){
             for (j in 0..5){
-                canvas.drawRect(d*6+i*d, topSpacing+d*9+j*d, d*6+i*d+d, topSpacing+d*9+j*d+d, borderPaint)
+                canvas.drawRect(d*6+i*d, topSpacing+d*9+j*d, d*6+i*d+d, topSpacing+d*9+j*d+d, paint)
             }
         }
 
