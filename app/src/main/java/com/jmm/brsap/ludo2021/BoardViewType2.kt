@@ -7,12 +7,14 @@ import android.graphics.Paint
 import android.graphics.RectF
 import android.util.AttributeSet
 import android.view.View
+import androidx.core.content.ContextCompat
 
 class BoardViewType2(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
 
     // Painter
     private lateinit var borderPaint:Paint
     private lateinit var redPaint:Paint
+    private lateinit var whitePaint:Paint
     private lateinit var greenPaint:Paint
     private lateinit var yellowPaint:Paint
     private lateinit var bluePaint:Paint
@@ -83,6 +85,12 @@ class BoardViewType2(context: Context?, attrs: AttributeSet?) : View(context, at
             style = Paint.Style.FILL
         }
 
+        whitePaint = Paint(Paint.ANTI_ALIAS_FLAG)
+        whitePaint.apply {
+            color = Color.WHITE
+            isAntiAlias = true
+            style = Paint.Style.FILL
+        }
         bluePaint = Paint(Paint.ANTI_ALIAS_FLAG)
         bluePaint.apply {
             color = Color.BLUE
@@ -104,10 +112,14 @@ class BoardViewType2(context: Context?, attrs: AttributeSet?) : View(context, at
             style = Paint.Style.FILL
         }
 
+        greenPaint.setColor(ContextCompat.getColor(context,R.color.purple_700))
+
     }
 
     private fun createBoard(canvas: Canvas){
-
+        createRectangle(0,0,15,15,canvas,whitePaint)
+        createRectangle(0,0,1,1,canvas,greenPaint)
+        createRoundRect(0,0,1,1,canvas,borderPaint)
     }
 
 
@@ -120,12 +132,23 @@ class BoardViewType2(context: Context?, attrs: AttributeSet?) : View(context, at
         paint:Paint
     ){
         val rectF = RectF(column[x],row[y],column[width],row[height])
-        canvas.drawRect(rectF,redPaint)
+        canvas.drawRect(rectF,paint)
     }
 
+    private fun createRoundRect(
+        x:Int,
+        y:Int,
+        width:Int,
+        height:Int,
+        canvas: Canvas,
+        paint:Paint
+    ){
+        val rectF = RectF(column[x]+cellPadding,row[y]+cellPadding,column[width]-cellPadding,row[height]-cellPadding)
+        canvas.drawRoundRect(rectF,d/10,d/10,paint)
+    }
     private fun populateDisplayMatrix(){
-        for (i in 0..14) column.add(d*i)
-        for (j in 0..14) row.add(topSpacing+d*j)
+        for (i in 0..15) column.add(d*i)
+        for (j in 0..15) row.add(topSpacing+d*j)
 
 //        for (i in 0..14){
 //            val row = mutableListOf<Pair<Float,Float>>()
