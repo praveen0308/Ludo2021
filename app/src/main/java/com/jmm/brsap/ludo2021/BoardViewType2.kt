@@ -1,13 +1,12 @@
 package com.jmm.brsap.ludo2021
 
 import android.content.Context
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
-import android.graphics.RectF
+import android.graphics.*
+import android.graphics.Shader.TileMode
 import android.util.AttributeSet
 import android.view.View
 import androidx.core.content.ContextCompat
+
 
 class BoardViewType2(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
 
@@ -18,6 +17,7 @@ class BoardViewType2(context: Context?, attrs: AttributeSet?) : View(context, at
     private lateinit var greenPaint:Paint
     private lateinit var yellowPaint:Paint
     private lateinit var bluePaint:Paint
+
 
     // dimension of single cell into ludo map
     private var d: Float = 0f
@@ -98,11 +98,10 @@ class BoardViewType2(context: Context?, attrs: AttributeSet?) : View(context, at
             style = Paint.Style.FILL
         }
 
-        yellowPaint = Paint(Paint.ANTI_ALIAS_FLAG)
+        val mShader: Shader = LinearGradient(0f, topSpacing.toFloat(), d, topSpacing+d, Color.BLUE, Color.GREEN, TileMode.CLAMP)
+        yellowPaint = Paint()
         yellowPaint.apply {
-            color = Color.YELLOW
-            isAntiAlias = true
-            style = Paint.Style.FILL
+            shader = mShader
         }
 
         greenPaint = Paint(Paint.ANTI_ALIAS_FLAG)
@@ -118,8 +117,8 @@ class BoardViewType2(context: Context?, attrs: AttributeSet?) : View(context, at
 
     private fun createBoard(canvas: Canvas){
         createRectangle(0,0,15,15,canvas,whitePaint)
-        createRectangle(0,0,1,1,canvas,greenPaint)
-        createRoundRect(0,0,1,1,canvas,borderPaint)
+        createRectangle(0,0,1,1,canvas,yellowPaint)
+//        createRoundRect(0,0,1,1,canvas,borderPaint)
     }
 
 
