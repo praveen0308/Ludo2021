@@ -54,6 +54,7 @@ class BoardViewType2(context: Context?, attrs: AttributeSet?) : View(context, at
         populateDisplayMatrix()
         initializePainters()
         createBoard(canvas)
+        createPlayersSpot(canvas)
 
     }
 
@@ -71,7 +72,7 @@ class BoardViewType2(context: Context?, attrs: AttributeSet?) : View(context, at
         cellPadding = d / 15
         tileRadius = d / 10
         restingRoomPadding = d / 5
-        restingPlaceRadius = d / 2
+        restingPlaceRadius = d / 3
 
 
     }
@@ -91,7 +92,7 @@ class BoardViewType2(context: Context?, attrs: AttributeSet?) : View(context, at
         redPaint.apply {
             color = Color.RED
             isAntiAlias = true
-            style = Paint.Style.FILL
+            style = Paint.Style.STROKE
         }
 
         whitePaint = Paint(Paint.ANTI_ALIAS_FLAG)
@@ -104,31 +105,25 @@ class BoardViewType2(context: Context?, attrs: AttributeSet?) : View(context, at
         bluePaint.apply {
             color = Color.BLUE
             isAntiAlias = true
-            style = Paint.Style.FILL
+            style = Paint.Style.STROKE
         }
 
-        val mShader: Shader = LinearGradient(
-            0f,
-            topSpacing.toFloat(),
-            d,
-            topSpacing + d,
-            Color.BLUE,
-            Color.GREEN,
-            TileMode.CLAMP
-        )
         yellowPaint = Paint()
         yellowPaint.apply {
-            shader = mShader
+            color = Color.YELLOW
+            isAntiAlias = true
+            style = Paint.Style.STROKE
         }
 
         greenPaint = Paint(Paint.ANTI_ALIAS_FLAG)
         greenPaint.apply {
+            strokeWidth= 5F
             color = Color.GREEN
             isAntiAlias = true
-            style = Paint.Style.FILL
+            style = Paint.Style.STROKE
         }
 
-        greenPaint.setColor(ContextCompat.getColor(context, R.color.purple_700))
+//        greenPaint.setColor(ContextCompat.getColor(context, R.color.purple_700))
 
     }
 
@@ -194,15 +189,17 @@ class BoardViewType2(context: Context?, attrs: AttributeSet?) : View(context, at
         width: Int,
         height: Int,
         canvas: Canvas,
-        img:Int,
-        padding:Int
+        img: Int,
+        padding: Int
     ) {
         val mDrawable = ContextCompat.getDrawable(context, img)
         val dPadding = cellPadding * padding
-        mDrawable!!.setBounds((column[x] + dPadding).toInt(),
+        mDrawable!!.setBounds(
+            (column[x] + dPadding).toInt(),
             (row[y] + dPadding).toInt(),
             (column[x + width] - dPadding).toInt(),
-            (row[y + height] - dPadding).toInt())
+            (row[y + height] - dPadding).toInt()
+        )
 
         mDrawable.draw(canvas)
     }
@@ -216,33 +213,26 @@ class BoardViewType2(context: Context?, attrs: AttributeSet?) : View(context, at
             for (j in 0..5) {
                 if (i == 6 && j == 1) {
                     createRoundRect(
-                        j,
-                        i,
-                        1,
-                        1,
+                        j, i, 1, 1,
                         canvas,
                         R.color.start_green,
                         R.color.end_green,
                         tileRadius
                     )
-                    drawDrawables(j,
-                        i,
-                        1,
-                        1,
-                        canvas,whiteStar,3)
+                    drawDrawables(
+                        j, i, 1, 1,
+                        canvas, whiteStar, 3
+                    )
 
                 } else if (i == 7 && j > 0) {
                     createRoundRect(
-                        j,
-                        i,
-                        1,
-                        1,
+                        j, i, 1, 1,
                         canvas,
                         R.color.start_green,
                         R.color.end_green,
                         tileRadius
                     )
-                } else if(i == 8 && j==2){
+                } else if (i == 8 && j == 2) {
                     createRoundRect(
                         j,
                         i,
@@ -253,15 +243,15 @@ class BoardViewType2(context: Context?, attrs: AttributeSet?) : View(context, at
                         R.color.end_white,
                         tileRadius
                     )
-                    drawDrawables(j,
+                    drawDrawables(
+                        j,
                         i,
                         1,
                         1,
                         canvas,
-                        greyStar,3
+                        greyStar, 3
                     )
-                }
-                else {
+                } else {
                     createRoundRect(
                         j,
                         i,
@@ -279,7 +269,7 @@ class BoardViewType2(context: Context?, attrs: AttributeSet?) : View(context, at
         // top side
         for (i in 0..5) {
             for (j in 6..8) {
-                if (i == 1 && j == 8 || j == 7 && i > 0) {
+                if (i == 1 && j == 8) {
                     createRoundRect(
                         j,
                         i,
@@ -289,6 +279,41 @@ class BoardViewType2(context: Context?, attrs: AttributeSet?) : View(context, at
                         R.color.start_red,
                         R.color.end_red,
                         tileRadius
+                    )
+
+                    drawDrawables(
+                        j, i, 1, 1,
+                        canvas, whiteStar, 3
+                    )
+                } else if (j == 7 && i > 0) {
+                    createRoundRect(
+                        j,
+                        i,
+                        1,
+                        1,
+                        canvas,
+                        R.color.start_red,
+                        R.color.end_red,
+                        tileRadius
+                    )
+                } else if (j == 6 && i == 2) {
+                    createRoundRect(
+                        j,
+                        i,
+                        1,
+                        1,
+                        canvas,
+                        R.color.start_white,
+                        R.color.end_white,
+                        tileRadius
+                    )
+                    drawDrawables(
+                        j,
+                        i,
+                        1,
+                        1,
+                        canvas,
+                        greyStar, 3
                     )
                 } else {
                     createRoundRect(
@@ -310,7 +335,7 @@ class BoardViewType2(context: Context?, attrs: AttributeSet?) : View(context, at
         // right side
         for (i in 6..8) {
             for (j in 9..14) {
-                if (i == 8 && j == 13 || i == 7 && j < 14) {
+                if (i == 8 && j == 13) {
                     createRoundRect(
                         j,
                         i,
@@ -320,6 +345,40 @@ class BoardViewType2(context: Context?, attrs: AttributeSet?) : View(context, at
                         R.color.start_blue,
                         R.color.end_blue,
                         tileRadius
+                    )
+                    drawDrawables(
+                        j, i, 1, 1,
+                        canvas, whiteStar, 3
+                    )
+                } else if (i == 7 && j < 14) {
+                    createRoundRect(
+                        j,
+                        i,
+                        1,
+                        1,
+                        canvas,
+                        R.color.start_blue,
+                        R.color.end_blue,
+                        tileRadius
+                    )
+                } else if (i == 6 && j == 12) {
+                    createRoundRect(
+                        j,
+                        i,
+                        1,
+                        1,
+                        canvas,
+                        R.color.start_white,
+                        R.color.end_white,
+                        tileRadius
+                    )
+                    drawDrawables(
+                        j,
+                        i,
+                        1,
+                        1,
+                        canvas,
+                        greyStar, 3
                     )
                 } else {
                     createRoundRect(
@@ -339,7 +398,7 @@ class BoardViewType2(context: Context?, attrs: AttributeSet?) : View(context, at
         // bottom side
         for (i in 9..14) {
             for (j in 6..8) {
-                if (i == 13 && j == 6 || j == 7 && i < 14) {
+                if (i == 13 && j == 6) {
                     createRoundRect(
                         j,
                         i,
@@ -349,6 +408,40 @@ class BoardViewType2(context: Context?, attrs: AttributeSet?) : View(context, at
                         R.color.start_yellow,
                         R.color.end_yellow,
                         tileRadius
+                    )
+                    drawDrawables(
+                        j, i, 1, 1,
+                        canvas, whiteStar, 3
+                    )
+                } else if (j == 7 && i < 14) {
+                    createRoundRect(
+                        j,
+                        i,
+                        1,
+                        1,
+                        canvas,
+                        R.color.start_yellow,
+                        R.color.end_yellow,
+                        tileRadius
+                    )
+                } else if (j == 8 && i == 12) {
+                    createRoundRect(
+                        j,
+                        i,
+                        1,
+                        1,
+                        canvas,
+                        R.color.start_white,
+                        R.color.end_white,
+                        tileRadius
+                    )
+                    drawDrawables(
+                        j,
+                        i,
+                        1,
+                        1,
+                        canvas,
+                        greyStar, 3
                     )
                 } else {
                     createRoundRect(
@@ -364,23 +457,59 @@ class BoardViewType2(context: Context?, attrs: AttributeSet?) : View(context, at
                 }
             }
         }
-        drawDrawables(6,6,3,3,canvas,R.drawable.ic_ludo_center,1)
+        drawDrawables(6, 6, 3, 3, canvas, R.drawable.ic_ludo_center, 1)
     }
 
     private fun createRestingPlaces(canvas: Canvas) {
         createRoundRect(
             0, 0, 6, 6, canvas, R.color.start_green, R.color.end_green, restingPlaceRadius
         )
+
+        createCircle(3,3,canvas,whitePaint,d*2)
+
         createRoundRect(
             9, 0, 6, 6, canvas, R.color.start_red, R.color.end_red, restingPlaceRadius
         )
+        createCircle(12,3,canvas,whitePaint,d*2)
         createRoundRect(
             0, 9, 6, 6, canvas, R.color.start_yellow, R.color.end_yellow, restingPlaceRadius
         )
+
+        createCircle(3,12,canvas,whitePaint,d*2)
         createRoundRect(
             9, 9, 6, 6, canvas, R.color.start_blue, R.color.end_blue, restingPlaceRadius
         )
+        createCircle(12,12,canvas,whitePaint,d*2)
+
     }
+
+    private fun createPlayersSpot(canvas: Canvas){
+        createSpots(2,2,canvas,greenPaint,d/3)
+        createSpots(4,2,canvas,greenPaint,d/3)
+        createSpots(2,4,canvas,greenPaint,d/3)
+        createSpots(4,4,canvas,greenPaint,d/3)
+
+    }
+
+    private fun createCircle(
+        x: Int,
+        y: Int,
+        canvas: Canvas,
+        paint: Paint,
+        radius: Float
+    ) {
+        canvas.drawCircle(column[x],row[y],radius, paint)
+    }
+    private fun createSpots(
+        x: Int,
+        y: Int,
+        canvas: Canvas,
+        paint: Paint,
+        radius: Float
+    ) {
+        canvas.drawCircle(column[x]+d/2,row[y]+d/2,radius, paint)
+    }
+
 
     private fun populateDisplayMatrix() {
         for (i in 0..15) column.add(d * i)
