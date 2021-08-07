@@ -48,12 +48,17 @@ class BoardViewType2(context: Context?, attrs: AttributeSet?) : View(context, at
     private val row = mutableListOf<Float>()
     private val screenRows= mutableListOf<Float>()
 
+
+    init {
+        initializePainters()
+
+    }
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
         canvas.drawColor(Color.WHITE)
         prepareScreenDimensions()
         populateDisplayMatrix()
-        initializePainters()
+
         createBoard(canvas)
         createPlayersSpot(canvas)
 
