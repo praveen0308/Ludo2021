@@ -46,6 +46,7 @@ class BoardViewType2(context: Context?, attrs: AttributeSet?) : View(context, at
     private val _matrix = mutableListOf<MutableList<Pair<Float, Float>>>()
     private val column = mutableListOf<Float>()
     private val row = mutableListOf<Float>()
+    private val screenRows= mutableListOf<Float>()
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
