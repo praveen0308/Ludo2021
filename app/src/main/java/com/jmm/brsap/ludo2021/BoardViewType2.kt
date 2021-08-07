@@ -59,6 +59,8 @@ class BoardViewType2(context: Context?, attrs: AttributeSet?) : View(context, at
 
     }
 
+    public fun getDSize() = d
+
     private fun prepareScreenDimensions() {
         mWidth = width
         mHeight = height
@@ -91,7 +93,8 @@ class BoardViewType2(context: Context?, attrs: AttributeSet?) : View(context, at
 
         redPaint = Paint(Paint.ANTI_ALIAS_FLAG)
         redPaint.apply {
-            color = Color.RED
+            strokeWidth= 5F
+            color = ContextCompat.getColor(context,R.color.end_red)
             isAntiAlias = true
             style = Paint.Style.STROKE
         }
@@ -104,14 +107,16 @@ class BoardViewType2(context: Context?, attrs: AttributeSet?) : View(context, at
         }
         bluePaint = Paint(Paint.ANTI_ALIAS_FLAG)
         bluePaint.apply {
-            color = Color.BLUE
+            strokeWidth= 5F
+            color = ContextCompat.getColor(context,R.color.end_blue)
             isAntiAlias = true
             style = Paint.Style.STROKE
         }
 
         yellowPaint = Paint()
         yellowPaint.apply {
-            color = Color.YELLOW
+            strokeWidth= 5F
+            color = ContextCompat.getColor(context,R.color.end_yellow)
             isAntiAlias = true
             style = Paint.Style.STROKE
         }
@@ -119,21 +124,14 @@ class BoardViewType2(context: Context?, attrs: AttributeSet?) : View(context, at
         greenPaint = Paint(Paint.ANTI_ALIAS_FLAG)
         greenPaint.apply {
             strokeWidth= 5F
-            color = Color.GREEN
+            color = ContextCompat.getColor(context,R.color.end_green)
             isAntiAlias = true
             style = Paint.Style.STROKE
         }
 
-//        greenPaint.setColor(ContextCompat.getColor(context, R.color.purple_700))
-
     }
 
     private fun createBoard(canvas: Canvas) {
-//        createRectangle(0,0,15,15,canvas,redPaint)
-//        createRectangle(0,0,1,1,canvas,yellowPaint)
-//
-//        createRoundRect(0,0,1,1,canvas,borderPaint)
-
         createNormalTiles(canvas)
         createRestingPlaces(canvas)
     }
@@ -146,7 +144,7 @@ class BoardViewType2(context: Context?, attrs: AttributeSet?) : View(context, at
         canvas: Canvas,
         paint: Paint
     ) {
-        val rectF = RectF(column[x], row[y], column[width], row[height])
+        val rectF = RectF(column[x], row[y], column[x+width], row[y+height])
         canvas.drawRect(rectF, paint)
     }
 
@@ -486,9 +484,10 @@ class BoardViewType2(context: Context?, attrs: AttributeSet?) : View(context, at
 
     private fun createPlayersSpot(canvas: Canvas){
         createSpots(2,2,canvas,greenPaint,d/3)
-        createSpots(4,2,canvas,greenPaint,d/3)
-        createSpots(2,4,canvas,greenPaint,d/3)
-        createSpots(4,4,canvas,greenPaint,d/3)
+        createSpots(2,11,canvas,yellowPaint,d/3)
+        createSpots(11,2,canvas,redPaint,d/3)
+        createSpots(11,11,canvas,bluePaint,d/3)
+
 
     }
 
@@ -508,7 +507,10 @@ class BoardViewType2(context: Context?, attrs: AttributeSet?) : View(context, at
         paint: Paint,
         radius: Float
     ) {
-        canvas.drawCircle(column[x]+d/2,row[y]+d/2,radius, paint)
+        canvas.drawCircle(column[x]+d/4,row[y]+d/3,radius, paint)
+        canvas.drawCircle(column[x]+d*2-d/4,row[y]+d/3,radius, paint)
+        canvas.drawCircle(column[x]+d/4,row[y+2]-d/3,radius, paint)
+        canvas.drawCircle(column[x]+d*2-d/4,row[y+2]-d/3,radius, paint)
     }
 
 
