@@ -65,6 +65,7 @@ class BoardViewType2(context: Context?, attrs: AttributeSet?) : View(context, at
     }
 
     public fun getDSize() = d
+    public fun getTopSpacing() = topSpacing
 
     private fun prepareScreenDimensions() {
         mWidth = width
@@ -492,7 +493,6 @@ class BoardViewType2(context: Context?, attrs: AttributeSet?) : View(context, at
         createSpots(2,11,canvas,yellowPaint,d/3)
         createSpots(11,2,canvas,redPaint,d/3)
         createSpots(11,11,canvas,bluePaint,d/3)
-
 
     }
 
