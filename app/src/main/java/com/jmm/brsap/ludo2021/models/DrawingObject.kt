@@ -3,10 +3,10 @@ package com.jmm.brsap.ludo2021.models
 import android.graphics.Paint
 
 data class DrawingObject(
-    var pX1:Float,
-    var pY1:Float,
-    var pX2:Float,
-    var pY2:Float,
+    var pX1:Int,
+    var pY1:Int,
+    var pX2:Int,
+    var pY2:Int,
     var paint: Paint,
     var radius: Float,
     var padding:Float,
