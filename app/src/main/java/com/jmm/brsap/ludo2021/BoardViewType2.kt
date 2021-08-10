@@ -70,7 +70,10 @@ class BoardViewType2(context: Context?, attrs: AttributeSet?) : View(context, at
         createBoard(canvas)
         createPlayersSpot(canvas)
 
-
+        createRoundRect(0,15,2,1,canvas,R.color.start_wood,R.color.end_wood,d/10)
+        createRoundRect(0,0,2,1,canvas,R.color.start_wood,R.color.end_wood,d/10)
+        createRoundRect(13,0,2,1,canvas,R.color.start_wood,R.color.end_wood,d/10)
+        createRoundRect(13,15,2,1,canvas,R.color.start_wood,R.color.end_wood,d/10)
     }
 
     public fun getDSize() = d

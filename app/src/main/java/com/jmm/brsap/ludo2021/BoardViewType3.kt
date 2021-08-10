@@ -77,6 +77,24 @@ class BoardViewType3(context: Context?, attrs: AttributeSet?) : View(context, at
         Log.i("testing","height : $mHeight")
         Log.i("testing","topSpacing : $topSpacing")
         Log.i("testing","d : $d")
+
+        // generating dice spots
+        for (spot in ludoMap.diceSpots){
+            createRoundRect(spot.x1,spot.y1,spot.x2,spot.y2,canvas,R.color.start_wood,R.color.end_wood,d/5)
+        }
+
+
+/*        // dice1
+        createRoundRect(d/10,topSpacing+15*d,3*d/2,topSpacing+15*d+3*d/2,canvas,R.color.start_wood,R.color.end_wood,d/5)
+
+        // dice2
+        createRoundRect(d/10,topSpacing-3*d/2,3*d/2,topSpacing*1f,canvas,R.color.start_wood,R.color.end_wood,d/5)
+        // dice3
+        createRoundRect(14*d-d/2,topSpacing-3*d/2,14*d+2*d/2-d/10,topSpacing*1f,canvas,R.color.start_wood,R.color.end_wood,d/5)
+
+        // dice4
+        createRoundRect(14*d-d/2,topSpacing+15*d,14*d+2*d/2-d/10,topSpacing+15*d+3*d/2,canvas,R.color.start_wood,R.color.end_wood,d/5)*/
+
     }
 
     public fun getDSize() = d
@@ -102,6 +120,8 @@ class BoardViewType3(context: Context?, attrs: AttributeSet?) : View(context, at
 
     fun setLudoMap(ludoMap: LudoMap) {
         this.ludoMap = ludoMap
+
+
 
     }
 
@@ -171,6 +191,41 @@ class BoardViewType3(context: Context?, attrs: AttributeSet?) : View(context, at
     ) {
         val rectF = RectF(column[x], row[y], column[x + width], row[y + height])
         canvas.drawRect(rectF, paint)
+    }
+
+    private fun createRoundRect(
+        x1: Float,
+        y1: Float,
+        x2: Float,
+        y2: Float,
+        canvas: Canvas,
+        startColor:Int,
+        endColor:Int,
+        radius: Float
+    ) {
+
+        val mShader: Shader = LinearGradient(
+            x1,
+            y1,
+            x2,
+            y2,
+            ContextCompat.getColor(context, startColor), ContextCompat.getColor(context, endColor),
+            TileMode.CLAMP
+        )
+
+        val paint = Paint()
+        paint.apply {
+            shader = mShader
+        }
+
+        val rectF = RectF(
+            x1,
+            y1,
+            x2,
+            y2
+        )
+        canvas.drawRoundRect(rectF, radius, radius, paint)
+        canvas.drawRoundRect(rectF, radius, radius, borderPaint)
     }
 
     private fun createRoundRect(

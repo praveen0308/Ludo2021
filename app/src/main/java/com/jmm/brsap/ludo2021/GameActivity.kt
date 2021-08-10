@@ -4,12 +4,16 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.ImageView
+import androidx.activity.viewModels
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.isVisible
 import com.jmm.brsap.ludo2021.databinding.ActivityGameBinding
 import com.jmm.brsap.ludo2021.models.*
 
 class GameActivity : AppCompatActivity() {
 
+    private val viewModel by viewModels<GameViewModel>()
     private lateinit var ludoMap: LudoMap
     private lateinit var binding: ActivityGameBinding
 
@@ -43,6 +47,9 @@ class GameActivity : AppCompatActivity() {
     private val boardTiles = mutableListOf<Tile>()
     private val homePaths = mutableListOf<MutableList<Tile>>()
     private val restingPlaces = mutableListOf<RestingPlace>()
+    private val dices = mutableListOf<Pair<PlayerColors,ImageView>>()
+
+    private val TAG = "GameActivity"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,28 +60,98 @@ class GameActivity : AppCompatActivity() {
 
         binding.boardView.setLudoMap(ludoMap)
         placeTokens()
+        placeDice()
     }
 
+
+
+
     private fun placeTokens(){
-        placeView(binding.ivYellow1,column[boardTiles[0].column-1],row[boardTiles[0].row-1])
         for (place in ludoMap.restingPlaces){
             when(place.color){
                 PlayerColors.YELLOW->{
                     for (spot in place.spots){
-                        placeView(binding.ivYellow1,spot.pX,spot.pY)
+                        when(spot.id){
+                            1->{placeTokenOnSpot(binding.ivYellow1,spot.pX,spot.pY) }
+                            2->{placeTokenOnSpot(binding.ivYellow2,spot.pX,spot.pY) }
+                            3->{placeTokenOnSpot(binding.ivYellow3,spot.pX,spot.pY) }
+                            4->{placeTokenOnSpot(binding.ivYellow4,spot.pX,spot.pY) }
+                        }
+
+                    }
+                }
+
+                PlayerColors.GREEN->{
+                    for (spot in place.spots){
+                        when(spot.id){
+                            1->{placeTokenOnSpot(binding.ivGreen1,spot.pX,spot.pY) }
+                            2->{placeTokenOnSpot(binding.ivGreen2,spot.pX,spot.pY) }
+                            3->{placeTokenOnSpot(binding.ivGreen3,spot.pX,spot.pY) }
+                            4->{placeTokenOnSpot(binding.ivGreen4,spot.pX,spot.pY) }
+                        }
+
+                    }
+                }
+
+                PlayerColors.RED->{
+                    for (spot in place.spots){
+                        when(spot.id){
+                            1->{placeTokenOnSpot(binding.ivRed1,spot.pX,spot.pY) }
+                            2->{placeTokenOnSpot(binding.ivRed2,spot.pX,spot.pY) }
+                            3->{placeTokenOnSpot(binding.ivRed3,spot.pX,spot.pY) }
+                            4->{placeTokenOnSpot(binding.ivRed4,spot.pX,spot.pY) }
+                        }
+
+                    }
+                }
+
+                PlayerColors.BLUE->{
+                    for (spot in place.spots){
+                        when(spot.id){
+                            1->{placeTokenOnSpot(binding.ivBlue1,spot.pX,spot.pY) }
+                            2->{placeTokenOnSpot(binding.ivBlue2,spot.pX,spot.pY) }
+                            3->{placeTokenOnSpot(binding.ivBlue3,spot.pX,spot.pY) }
+                            4->{placeTokenOnSpot(binding.ivBlue4,spot.pX,spot.pY) }
+                        }
+
                     }
                 }
             }
         }
     }
 
-    private fun placeView(view:View,x:Float,y:Float){
-        view.layoutParams.height = (d/2).toInt()
-        view.layoutParams.width = (d/2).toInt()
+    private fun placeDice(){
+        for (spot in ludoMap.diceSpots){
+            var dice : View
+            when(spot.colors){
+                PlayerColors.YELLOW->dice = binding.ivDice1
+                PlayerColors.GREEN->dice = binding.ivDice2
+                PlayerColors.RED->dice = binding.ivDice3
+                PlayerColors.BLUE->dice = binding.ivDice4
+                else->dice = binding.ivDice4
+            }
+//            placeDiceOnSpot(dice,spot.x1,spot.y1)
+            placeDiceOnSpot(dice,spot.x1,spot.y1)
+        }
+
+    }
+    private fun placeTokenOnSpot(view:View, x:Float, y:Float){
+        view.layoutParams.height = (3*d/4).toInt()
+        view.layoutParams.width = (3*d/4).toInt()
 
         val layoutParams =view.layoutParams as ConstraintLayout.LayoutParams
-        layoutParams.marginStart = x.toInt()
-        layoutParams.topMargin = y.toInt()
+        layoutParams.marginStart = (x-3*d/8).toInt()
+        layoutParams.topMargin = (y-2*d/3).toInt()
+        view.layoutParams = layoutParams
+    }
+
+    private fun placeDiceOnSpot(view:View, x:Float, y:Float){
+        view.layoutParams.height = d.toInt()
+        view.layoutParams.width = d.toInt()
+
+        val layoutParams =view.layoutParams as ConstraintLayout.LayoutParams
+        layoutParams.marginStart = (x+d/5).toInt()
+        layoutParams.topMargin = (y+d/5).toInt()
         view.layoutParams = layoutParams
     }
 
@@ -82,7 +159,25 @@ class GameActivity : AppCompatActivity() {
         generateRestingPlaces()
         generateTiles()
         generateHomePaths()
-        ludoMap = LudoMap(100,PlayersCount.FOUR_PLAYER, emptyList(),restingPlaces,boardTiles,homePaths)
+
+        val diceSpots = mutableListOf<DiceSpot>()
+        diceSpots.add(DiceSpot(d/10,topSpacing+15*d,3*d/2,topSpacing+15*d+3*d/2,PlayerColors.YELLOW,d/5))
+        diceSpots.add(DiceSpot(d/10,topSpacing-3*d/2,3*d/2,topSpacing*1f,PlayerColors.GREEN,d/5))
+        diceSpots.add(DiceSpot(14*d-d/2,topSpacing-3*d/2,14*d+2*d/2-d/10,topSpacing*1f,PlayerColors.RED,d/5))
+        diceSpots.add(DiceSpot(14*d-d/2,topSpacing+15*d,14*d+2*d/2-d/10,topSpacing+15*d+3*d/2,PlayerColors.BLUE,d/5))
+
+        ludoMap = LudoMap(100,PlayersCount.FOUR_PLAYER, emptyList(),restingPlaces,boardTiles,homePaths,diceSpots)
+    }
+
+
+    private fun subscribeObservers(){
+        viewModel.activePlayer.observe(this,{
+            binding.ivDice1.isVisible = true
+            binding.ivDice2.isVisible = true
+            binding.ivDice3.isVisible = true
+            binding.ivDice4.isVisible = true
+
+        })
     }
 
     private fun prepareDimensions(){
@@ -94,9 +189,9 @@ class GameActivity : AppCompatActivity() {
         bottomSpacing = (mHeight+mWidth)/2
         d = (mWidth / 15).toFloat()
 
-        Log.i("testing","activity height : $mHeight")
-        Log.i("testing","activity topSpacing : $topSpacing")
-        Log.i("testing","activity d : $d")
+        Log.i(TAG,"activity height : $mHeight")
+        Log.i(TAG,"activity topSpacing : $topSpacing")
+        Log.i(TAG,"activity d : $d")
 
         for (i in 0..15) column.add(d * i)
         for (j in 0..15) row.add(topSpacing + d * j)
@@ -304,7 +399,7 @@ class GameActivity : AppCompatActivity() {
         var x = 2
         var y=11
 
-        // preparing green token spots
+        // preparing yellow token spots
         val ySpots = mutableListOf<Spot>()
 
         ySpots.add(Spot(1,column[x]+d/4,row[y]+d/3,d/3,PlayerColors.YELLOW))
@@ -332,7 +427,7 @@ class GameActivity : AppCompatActivity() {
         x=11
         y=2
 
-        // preparing green token spots
+        // preparing red token spots
         val rSpots = mutableListOf<Spot>()
 
         rSpots.add(Spot(1,column[x]+d/4,row[y]+d/3,d/3,PlayerColors.RED))
@@ -347,7 +442,7 @@ class GameActivity : AppCompatActivity() {
         x=11
         y=11
 
-        // preparing green token spots
+        // preparing blue token spots
         val bSpots = mutableListOf<Spot>()
         bSpots.add(Spot(1,column[x]+d/4,row[y]+d/3,d/3,PlayerColors.BLUE))
         bSpots.add(Spot(2,column[x+2]-d/4,row[y]+d/3,d/3,PlayerColors.BLUE))

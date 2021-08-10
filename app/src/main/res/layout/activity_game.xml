@@ -17,6 +17,35 @@
         android:translationZ="10dp"
         />
 
+    <ImageView
+        android:id="@+id/iv_dice_2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/dice1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:translationZ="10dp"
+        />
+
+    <ImageView
+        android:id="@+id/iv_dice_3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/dice1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:translationZ="10dp"
+        />
+
+    <ImageView
+        android:id="@+id/iv_dice_4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/dice1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:translationZ="10dp"
+        />
 
 
     <ImageView
@@ -26,7 +55,7 @@
         android:translationZ="10dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_green_token" />
+        app:srcCompat="@drawable/ic_green_token_01" />
     <ImageView
         android:id="@+id/iv_green_2"
         android:layout_width="wrap_content"
@@ -34,7 +63,7 @@
         android:translationZ="10dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_green_token" />
+        app:srcCompat="@drawable/ic_green_token_01" />
     <ImageView
         android:id="@+id/iv_green_3"
         android:layout_width="wrap_content"
@@ -42,7 +71,7 @@
         android:translationZ="10dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_green_token" />
+        app:srcCompat="@drawable/ic_green_token_01" />
     <ImageView
         android:id="@+id/iv_green_4"
         android:layout_width="wrap_content"
@@ -50,7 +79,7 @@
         android:translationZ="10dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_green_token" />
+        app:srcCompat="@drawable/ic_green_token_01" />
 
     <ImageView
         android:id="@+id/iv_red_1"
@@ -59,7 +88,7 @@
         android:translationZ="10dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_red_token" />
+        app:srcCompat="@drawable/ic_red_token_01" />
     <ImageView
         android:id="@+id/iv_red_2"
         android:layout_width="wrap_content"
@@ -67,7 +96,7 @@
         android:translationZ="10dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_red_token" />
+        app:srcCompat="@drawable/ic_red_token_01" />
     <ImageView
         android:id="@+id/iv_red_3"
         android:layout_width="wrap_content"
@@ -75,7 +104,7 @@
         android:translationZ="10dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_red_token" />
+        app:srcCompat="@drawable/ic_red_token_01" />
     <ImageView
         android:id="@+id/iv_red_4"
         android:layout_width="wrap_content"
@@ -83,7 +112,7 @@
         android:translationZ="10dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_red_token" />
+        app:srcCompat="@drawable/ic_red_token_01" />
 
     <ImageView
         android:id="@+id/iv_yellow_1"
@@ -92,7 +121,7 @@
         android:translationZ="10dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_yellow_token" />
+        app:srcCompat="@drawable/ic_yellow_token_01" />
     <ImageView
         android:id="@+id/iv_yellow_2"
         android:layout_width="wrap_content"
@@ -100,7 +129,7 @@
         android:translationZ="10dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_yellow_token" />
+        app:srcCompat="@drawable/ic_yellow_token_01" />
     <ImageView
         android:id="@+id/iv_yellow_3"
         android:layout_width="wrap_content"
@@ -108,7 +137,7 @@
         android:translationZ="10dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_yellow_token" />
+        app:srcCompat="@drawable/ic_yellow_token_01" />
     <ImageView
         android:id="@+id/iv_yellow_4"
         android:layout_width="wrap_content"
@@ -116,7 +145,7 @@
         android:translationZ="10dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_yellow_token" />
+        app:srcCompat="@drawable/ic_yellow_token_01" />
     <ImageView
         android:id="@+id/iv_blue_1"
         android:layout_width="wrap_content"
@@ -124,7 +153,7 @@
         android:translationZ="10dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_blue_token" />
+        app:srcCompat="@drawable/ic_blue_token_01" />
     <ImageView
         android:id="@+id/iv_blue_2"
         android:layout_width="wrap_content"
@@ -132,7 +161,7 @@
         android:translationZ="10dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_blue_token" />
+        app:srcCompat="@drawable/ic_blue_token_01" />
     <ImageView
         android:id="@+id/iv_blue_3"
         android:layout_width="wrap_content"
@@ -140,7 +169,7 @@
         android:translationZ="10dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_blue_token" />
+        app:srcCompat="@drawable/ic_blue_token_01" />
     <ImageView
         android:id="@+id/iv_blue_4"
         android:layout_width="wrap_content"
@@ -148,7 +177,7 @@
         android:translationZ="10dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_blue_token" />
+        app:srcCompat="@drawable/ic_blue_token_01" />
 
 
     <com.jmm.brsap.ludo2021.BoardView
