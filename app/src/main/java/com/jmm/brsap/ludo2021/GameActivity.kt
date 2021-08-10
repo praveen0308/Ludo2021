@@ -1,5 +1,6 @@
 package com.jmm.brsap.ludo2021
 
+import android.media.Image
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -8,8 +9,11 @@ import android.widget.ImageView
 import androidx.activity.viewModels
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
+import androidx.lifecycle.lifecycleScope
 import com.jmm.brsap.ludo2021.databinding.ActivityGameBinding
 import com.jmm.brsap.ludo2021.models.*
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class GameActivity : AppCompatActivity() {
 
@@ -48,6 +52,7 @@ class GameActivity : AppCompatActivity() {
     private val homePaths = mutableListOf<MutableList<Tile>>()
     private val restingPlaces = mutableListOf<RestingPlace>()
     private val dices = mutableListOf<Pair<PlayerColors,ImageView>>()
+    private val colors = hashMapOf<Int,PlayerColors>()
 
     private val TAG = "GameActivity"
 
@@ -58,14 +63,79 @@ class GameActivity : AppCompatActivity() {
         prepareDimensions()
         prepareLudoMap()
 
+        populateViews()
+        subscribeObservers()
+
         binding.boardView.setLudoMap(ludoMap)
         placeTokens()
         placeDice()
+
+        binding.apply {
+            ivDice1.setOnClickListener {
+                performDiceClick(1)
+            }
+
+            ivDice2.setOnClickListener {
+                performDiceClick(2)
+            }
+
+            ivDice3.setOnClickListener {
+                performDiceClick(3)
+            }
+
+            ivDice4.setOnClickListener {
+                performDiceClick(4)
+            }
+        }
+    }
+
+    private fun performDiceClick(index: Int){
+        var ivDice = ImageView(this)
+
+        for (dice in dices){
+            if (dice.first == colors[index]) ivDice = dice.second
+        }
+
+        ivDice.animate().scaleX(1.5f).scaleY(1.5f).rotation(-45f).rotationY(1080f).setDuration(500).withEndAction {
+            ivDice.scaleX = 1f
+            ivDice.scaleY = 1f
+            ivDice.rotation = 0f
+            ivDice.rotationY = 0f
+
+            val number = (1..6).random()
+            ivDice.setImageResource(getRandomDiceFace(number))
+            if (number!=6) viewModel.activePlayer.postValue(colors[if (index<4) index+1 else 1])
+        }
     }
 
 
+    private fun getRandomDiceFace(index : Int):Int{
+        val diceFaces = HashMap<Int,Int>()
+        diceFaces[1] = R.drawable.dice1
+        diceFaces[2] = R.drawable.dice2
+        diceFaces[3] = R.drawable.dice3
+        diceFaces[4] = R.drawable.dice4
+        diceFaces[5] = R.drawable.dice5
+        diceFaces[6] = R.drawable.dice6
+
+        return diceFaces[index]!!
+    }
 
 
+    private fun populateViews(){
+
+        colors[1] = PlayerColors.YELLOW
+        colors[2] = PlayerColors.GREEN
+        colors[3] = PlayerColors.RED
+        colors[4] = PlayerColors.BLUE
+
+        dices.add(Pair(PlayerColors.YELLOW,binding.ivDice1))
+        dices.add(Pair(PlayerColors.GREEN,binding.ivDice2))
+        dices.add(Pair(PlayerColors.RED,binding.ivDice3))
+        dices.add(Pair(PlayerColors.BLUE,binding.ivDice4))
+
+
+    }
     private fun placeTokens(){
         for (place in ludoMap.restingPlaces){
             when(place.color){
@@ -171,11 +241,16 @@ class GameActivity : AppCompatActivity() {
 
 
     private fun subscribeObservers(){
-        viewModel.activePlayer.observe(this,{
-            binding.ivDice1.isVisible = true
-            binding.ivDice2.isVisible = true
-            binding.ivDice3.isVisible = true
-            binding.ivDice4.isVisible = true
+        viewModel.activePlayer.observe(this,{color->
+            lifecycleScope.launch {
+                delay(800)
+                dices.onEach {
+                    it.second.isVisible = it.first == color
+                }
+
+            }
+
+
 
         })
     }
