@@ -1,7 +1,7 @@
 package com.jmm.brsap.ludo2021.models
 
 enum class PlayerColors {
-    RED,BLUE,YELLOW,GREEN
+    RED,BLUE,YELLOW,GREEN,WHITE
 }
 
 enum class PlayerNumbers{

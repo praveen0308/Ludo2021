@@ -50,22 +50,33 @@ class BoardViewType2(context: Context?, attrs: AttributeSet?) : View(context, at
 
 
     init {
+
         initializePainters()
 
+    }
+
+
+    override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
+        super.onLayout(changed, left, top, right, bottom)
+        prepareScreenDimensions()
     }
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
         canvas.drawColor(Color.WHITE)
-        prepareScreenDimensions()
+
+
         populateDisplayMatrix()
 
         createBoard(canvas)
         createPlayersSpot(canvas)
 
+        createRoundRect(0,15,2,1,canvas,R.color.start_wood,R.color.end_wood,d/10)
+        createRoundRect(0,0,2,1,canvas,R.color.start_wood,R.color.end_wood,d/10)
+        createRoundRect(13,0,2,1,canvas,R.color.start_wood,R.color.end_wood,d/10)
+        createRoundRect(13,15,2,1,canvas,R.color.start_wood,R.color.end_wood,d/10)
     }
 
     public fun getDSize() = d
-    public fun getTopSpacing() = topSpacing
 
     private fun prepareScreenDimensions() {
         mWidth = width
@@ -167,8 +178,8 @@ class BoardViewType2(context: Context?, attrs: AttributeSet?) : View(context, at
         val mShader: Shader = LinearGradient(
             column[x] + cellPadding,
             row[y] + cellPadding,
-            column[width] - cellPadding,
-            row[height] - cellPadding,
+            column[x+width] - cellPadding,
+            row[y+height] - cellPadding,
             ContextCompat.getColor(context, startColor), ContextCompat.getColor(context, endColor),
             TileMode.CLAMP
         )
@@ -466,24 +477,16 @@ class BoardViewType2(context: Context?, attrs: AttributeSet?) : View(context, at
     }
 
     private fun createRestingPlaces(canvas: Canvas) {
-        createRoundRect(
-            0, 0, 6, 6, canvas, R.color.start_green, R.color.end_green, restingPlaceRadius
-        )
-
+        createRoundRect(0, 0, 6, 6, canvas, R.color.start_green, R.color.end_green, restingPlaceRadius)
         createCircle(3,3,canvas,whitePaint,d*2)
 
-        createRoundRect(
-            9, 0, 6, 6, canvas, R.color.start_red, R.color.end_red, restingPlaceRadius
-        )
+        createRoundRect(9, 0, 6, 6, canvas, R.color.start_red, R.color.end_red, restingPlaceRadius)
         createCircle(12,3,canvas,whitePaint,d*2)
-        createRoundRect(
-            0, 9, 6, 6, canvas, R.color.start_yellow, R.color.end_yellow, restingPlaceRadius
-        )
 
+        createRoundRect(0, 9, 6, 6, canvas, R.color.start_yellow, R.color.end_yellow, restingPlaceRadius)
         createCircle(3,12,canvas,whitePaint,d*2)
-        createRoundRect(
-            9, 9, 6, 6, canvas, R.color.start_blue, R.color.end_blue, restingPlaceRadius
-        )
+
+        createRoundRect(9, 9, 6, 6, canvas, R.color.start_blue, R.color.end_blue, restingPlaceRadius)
         createCircle(12,12,canvas,whitePaint,d*2)
 
     }
@@ -493,7 +496,6 @@ class BoardViewType2(context: Context?, attrs: AttributeSet?) : View(context, at
         createSpots(2,11,canvas,yellowPaint,d/3)
         createSpots(11,2,canvas,redPaint,d/3)
         createSpots(11,11,canvas,bluePaint,d/3)
-
     }
 
     private fun createCircle(
@@ -513,9 +515,9 @@ class BoardViewType2(context: Context?, attrs: AttributeSet?) : View(context, at
         radius: Float
     ) {
         canvas.drawCircle(column[x]+d/4,row[y]+d/3,radius, paint)
-        canvas.drawCircle(column[x]+d*2-d/4,row[y]+d/3,radius, paint)
+        canvas.drawCircle(column[x+2]-d/4,row[y]+d/3,radius, paint)
         canvas.drawCircle(column[x]+d/4,row[y+2]-d/3,radius, paint)
-        canvas.drawCircle(column[x]+d*2-d/4,row[y+2]-d/3,radius, paint)
+        canvas.drawCircle(column[x+2]-d/4,row[y+2]-d/3,radius, paint)
     }
 
 

@@ -22,5 +22,9 @@
     <color name="outline_color">#000000</color>
 
 
+    <color name="start_wood">#eacda3</color>
+    <color name="end_wood">#d6ae7b</color>
+
+
 
 </resources>
