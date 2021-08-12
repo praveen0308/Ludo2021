@@ -32,19 +32,6 @@ class GameActivity : AppCompatActivity() {
     private var topSpacing: Int = 0
     private var bottomSpacing: Int = 0
 
-    // cell padding
-    private var cellPadding: Float = 0f
-
-    // room padding
-    private var restingRoomPadding: Float = 0f
-
-    // tile radius
-    private var tileRadius: Float = 0f
-
-    // resting place radius
-    private var restingPlaceRadius: Float = 0f
-
-
     private var column = mutableListOf<Float>()
     private var row= mutableListOf<Float>()
 
@@ -52,6 +39,10 @@ class GameActivity : AppCompatActivity() {
     private val homePaths = mutableListOf<MutableList<Tile>>()
     private val restingPlaces = mutableListOf<RestingPlace>()
     private val dices = mutableListOf<Pair<PlayerColors,ImageView>>()
+//    private val yellowTokens = mutableListOf<Pair<Int,ImageView>>()
+//    private val greenTokens = mutableListOf<Pair<Int,ImageView>>()
+//    private val redTokens = mutableListOf<Pair<Int,ImageView>>()
+//    private val blueTokens = mutableListOf<Pair<Int,ImageView>>()
     private val colors = hashMapOf<Int,PlayerColors>()
 
     private val TAG = "GameActivity"
@@ -70,7 +61,10 @@ class GameActivity : AppCompatActivity() {
         placeTokens()
         placeDice()
 
+        viewModel.activePlayer.postValue(ludoMap.players[0])  // first active yellow player
+
         binding.apply {
+
             ivDice1.setOnClickListener {
                 performDiceClick(1)
             }
@@ -87,8 +81,55 @@ class GameActivity : AppCompatActivity() {
                 performDiceClick(4)
             }
         }
+
+
     }
 
+    private fun subscribeObservers(){
+        viewModel.activeColor.observe(this,{color->
+            lifecycleScope.launch {
+                delay(800)
+                dices.onEach {
+                    it.second.isVisible = it.first == color
+                }
+
+            }
+            for (player in ludoMap.players){
+                if (player.color==color){
+                    viewModel.activePlayer.postValue(player)
+                }
+
+            }
+        })
+
+        viewModel.activePlayer.observe(this,{ activePlayer->
+            for(player in ludoMap.players){
+                if (player.id == activePlayer.id){
+                    for(token in player.tokens){
+                        lifecycleScope.launch {
+                            while (true) animateToken(token.color)
+                        }
+
+                    }
+                }
+            }
+
+        })
+    }
+
+    private suspend fun animateToken(color:PlayerColors){
+        for (player in ludoMap.players){
+            if (player.color == color){
+                player.tokens.onEach {
+                    it.tokenImage.animate().alpha(0.7f).setDuration(500).withEndAction {
+                        it.tokenImage.alpha = 1f
+
+                    }
+                }
+            }
+        }
+
+    }
     private fun performDiceClick(index: Int){
         var ivDice = ImageView(this)
 
@@ -104,7 +145,7 @@ class GameActivity : AppCompatActivity() {
 
             val number = (1..6).random()
             ivDice.setImageResource(getRandomDiceFace(number))
-            if (number!=6) viewModel.activePlayer.postValue(colors[if (index<4) index+1 else 1])
+            if (number!=6) viewModel.activeColor.postValue(colors[if (index<4) index+1 else 1])
         }
     }
 
@@ -122,6 +163,8 @@ class GameActivity : AppCompatActivity() {
     }
 
 
+
+
     private fun populateViews(){
 
         colors[1] = PlayerColors.YELLOW
@@ -135,6 +178,49 @@ class GameActivity : AppCompatActivity() {
         dices.add(Pair(PlayerColors.BLUE,binding.ivDice4))
 
 
+    }
+    private fun prepareLudoMap() {
+        generateRestingPlaces()
+        generateTiles()
+        generateHomePaths()
+
+        val diceSpots = mutableListOf<DiceSpot>()
+        diceSpots.add(DiceSpot(d/10,topSpacing+15*d,3*d/2,topSpacing+15*d+3*d/2,PlayerColors.YELLOW,d/5))
+        diceSpots.add(DiceSpot(d/10,topSpacing-3*d/2,3*d/2,topSpacing*1f,PlayerColors.GREEN,d/5))
+        diceSpots.add(DiceSpot(14*d-d/2,topSpacing-3*d/2,14*d+2*d/2-d/10,topSpacing*1f,PlayerColors.RED,d/5))
+        diceSpots.add(DiceSpot(14*d-d/2,topSpacing+15*d,14*d+2*d/2-d/10,topSpacing+15*d+3*d/2,PlayerColors.BLUE,d/5))
+
+
+        val players = mutableListOf<Player>()
+        val yellowTokens = mutableListOf<Token>()
+        yellowTokens.add(Token(1,PlayerColors.YELLOW,0,binding.ivYellow1))
+        yellowTokens.add(Token(2,PlayerColors.YELLOW,0,binding.ivYellow1))
+        yellowTokens.add(Token(3,PlayerColors.YELLOW,0,binding.ivYellow1))
+        yellowTokens.add(Token(4,PlayerColors.YELLOW,0,binding.ivYellow1))
+        players.add(Player(1,"Player 1",PlayerColors.YELLOW,PlayerNumbers.PLAYER_1,tokens = yellowTokens))
+
+        val greenTokens = mutableListOf<Token>()
+        greenTokens.add(Token(1,PlayerColors.GREEN,13,binding.ivGreen1))
+        greenTokens.add(Token(2,PlayerColors.GREEN,13,binding.ivGreen2))
+        greenTokens.add(Token(3,PlayerColors.GREEN,13,binding.ivGreen3))
+        greenTokens.add(Token(4,PlayerColors.GREEN,13,binding.ivGreen4))
+        players.add(Player(2,"Player 2",PlayerColors.GREEN,PlayerNumbers.PLAYER_2,tokens = greenTokens))
+
+        val redTokens = mutableListOf<Token>()
+        redTokens.add(Token(1,PlayerColors.RED,26,binding.ivRed1))
+        redTokens.add(Token(2,PlayerColors.RED,26,binding.ivRed2))
+        redTokens.add(Token(3,PlayerColors.RED,26,binding.ivRed3))
+        redTokens.add(Token(4,PlayerColors.RED,26,binding.ivRed4))
+        players.add(Player(3,"Player 3",PlayerColors.RED,PlayerNumbers.PLAYER_3,tokens = redTokens))
+
+        val blueTokens = mutableListOf<Token>()
+        blueTokens.add(Token(1,PlayerColors.BLUE,39,binding.ivBlue1))
+        blueTokens.add(Token(2,PlayerColors.BLUE,39,binding.ivBlue2))
+        blueTokens.add(Token(3,PlayerColors.BLUE,39,binding.ivBlue3))
+        blueTokens.add(Token(4,PlayerColors.BLUE,39,binding.ivBlue4))
+        players.add(Player(4,"Player 4",PlayerColors.BLUE,PlayerNumbers.PLAYER_4,tokens = blueTokens))
+
+        ludoMap = LudoMap(100,PlayersCount.FOUR_PLAYER, players,restingPlaces,boardTiles,homePaths,diceSpots)
     }
     private fun placeTokens(){
         for (place in ludoMap.restingPlaces){
@@ -189,7 +275,6 @@ class GameActivity : AppCompatActivity() {
             }
         }
     }
-
     private fun placeDice(){
         for (spot in ludoMap.diceSpots){
             var dice : View
@@ -214,7 +299,6 @@ class GameActivity : AppCompatActivity() {
         layoutParams.topMargin = (y-2*d/3).toInt()
         view.layoutParams = layoutParams
     }
-
     private fun placeDiceOnSpot(view:View, x:Float, y:Float){
         view.layoutParams.height = d.toInt()
         view.layoutParams.width = d.toInt()
@@ -225,35 +309,6 @@ class GameActivity : AppCompatActivity() {
         view.layoutParams = layoutParams
     }
 
-    private fun prepareLudoMap() {
-        generateRestingPlaces()
-        generateTiles()
-        generateHomePaths()
-
-        val diceSpots = mutableListOf<DiceSpot>()
-        diceSpots.add(DiceSpot(d/10,topSpacing+15*d,3*d/2,topSpacing+15*d+3*d/2,PlayerColors.YELLOW,d/5))
-        diceSpots.add(DiceSpot(d/10,topSpacing-3*d/2,3*d/2,topSpacing*1f,PlayerColors.GREEN,d/5))
-        diceSpots.add(DiceSpot(14*d-d/2,topSpacing-3*d/2,14*d+2*d/2-d/10,topSpacing*1f,PlayerColors.RED,d/5))
-        diceSpots.add(DiceSpot(14*d-d/2,topSpacing+15*d,14*d+2*d/2-d/10,topSpacing+15*d+3*d/2,PlayerColors.BLUE,d/5))
-
-        ludoMap = LudoMap(100,PlayersCount.FOUR_PLAYER, emptyList(),restingPlaces,boardTiles,homePaths,diceSpots)
-    }
-
-
-    private fun subscribeObservers(){
-        viewModel.activePlayer.observe(this,{color->
-            lifecycleScope.launch {
-                delay(800)
-                dices.onEach {
-                    it.second.isVisible = it.first == color
-                }
-
-            }
-
-
-
-        })
-    }
 
     private fun prepareDimensions(){
         val resourceId = resources.getIdentifier("status_bar_height", "dimen", "android")
@@ -271,6 +326,8 @@ class GameActivity : AppCompatActivity() {
         for (i in 0..15) column.add(d * i)
         for (j in 0..15) row.add(topSpacing + d * j)
     }
+
+    // Map generation after this
 
     private fun generateHomePaths(){
         val yPaths = mutableListOf<Tile>()

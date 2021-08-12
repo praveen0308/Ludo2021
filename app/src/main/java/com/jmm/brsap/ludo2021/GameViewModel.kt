@@ -2,9 +2,13 @@ package com.jmm.brsap.ludo2021
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.jmm.brsap.ludo2021.models.Player
 import com.jmm.brsap.ludo2021.models.PlayerColors
+import kotlinx.coroutines.flow.MutableStateFlow
 
 class GameViewModel : ViewModel(){
 
-    val activePlayer = MutableLiveData<PlayerColors>(PlayerColors.YELLOW)
+    val activeColor = MutableLiveData<PlayerColors>(PlayerColors.YELLOW)
+    val activePlayer = MutableLiveData<Player>()
+
 }

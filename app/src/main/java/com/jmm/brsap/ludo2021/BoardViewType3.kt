@@ -327,6 +327,36 @@ class BoardViewType3(context: Context?, attrs: AttributeSet?) : View(context, at
                     )
                 }
             }
+
+            when(tile.gateFor){
+                PlayerColors.YELLOW->{
+                    drawDrawables(
+                        tile.column-1,tile.row-1, 1, 1,
+                        canvas, R.drawable.ic_yellow_arrow, 4
+                    )
+                }
+                PlayerColors.GREEN->{
+                    drawDrawables(
+                        tile.column-1,tile.row-1, 1, 1,
+                        canvas, R.drawable.ic_green_arrow, 4
+                    )
+                }
+                PlayerColors.RED->{
+                    drawDrawables(
+                        tile.column-1,tile.row-1, 1, 1,
+                        canvas, R.drawable.ic_red_arrow, 4
+                    )
+                }
+                PlayerColors.BLUE->{
+                    drawDrawables(
+                        tile.column-1,tile.row-1, 1, 1,
+                        canvas, R.drawable.ic_blue_arrow, 4
+                    )
+                }
+                else->{
+
+                }
+            }
         }
 
         for(paths in ludoMap.homePaths){
