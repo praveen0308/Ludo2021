@@ -19,3 +19,9 @@ enum class PlayersCount{
     FOUR_PLAYER,
     SIX_PLAYER,
 }
+
+enum class DiceState{
+    WAITING,    // dice is waiting for player to move a token
+    READY,      // player had already moved a token or ready to play
+    SPINNING    // dice is spinning
+}

@@ -61,7 +61,7 @@ class GameActivity : AppCompatActivity() {
         placeTokens()
         placeDice()
 
-        viewModel.activePlayer.postValue(ludoMap.players[0])  // first active yellow player
+//        viewModel.activePlayer.postValue(ludoMap.players[0])  // first active yellow player
 
         binding.apply {
 
@@ -92,7 +92,6 @@ class GameActivity : AppCompatActivity() {
                 dices.onEach {
                     it.second.isVisible = it.first == color
                 }
-
             }
             for (player in ludoMap.players){
                 if (player.color==color){
@@ -145,6 +144,7 @@ class GameActivity : AppCompatActivity() {
 
             val number = (1..6).random()
             ivDice.setImageResource(getRandomDiceFace(number))
+
             if (number!=6) viewModel.activeColor.postValue(colors[if (index<4) index+1 else 1])
         }
     }
@@ -197,28 +197,37 @@ class GameActivity : AppCompatActivity() {
         yellowTokens.add(Token(2,PlayerColors.YELLOW,0,binding.ivYellow1))
         yellowTokens.add(Token(3,PlayerColors.YELLOW,0,binding.ivYellow1))
         yellowTokens.add(Token(4,PlayerColors.YELLOW,0,binding.ivYellow1))
-        players.add(Player(1,"Player 1",PlayerColors.YELLOW,PlayerNumbers.PLAYER_1,tokens = yellowTokens))
+        val yellowDice = Dice(PlayerColors.YELLOW,DiceState.READY,binding.ivDice1)
+        players.add(Player(1,"Player 1",PlayerColors.YELLOW,PlayerNumbers.PLAYER_1,tokens = yellowTokens,dice = yellowDice))
+
 
         val greenTokens = mutableListOf<Token>()
         greenTokens.add(Token(1,PlayerColors.GREEN,13,binding.ivGreen1))
         greenTokens.add(Token(2,PlayerColors.GREEN,13,binding.ivGreen2))
         greenTokens.add(Token(3,PlayerColors.GREEN,13,binding.ivGreen3))
         greenTokens.add(Token(4,PlayerColors.GREEN,13,binding.ivGreen4))
-        players.add(Player(2,"Player 2",PlayerColors.GREEN,PlayerNumbers.PLAYER_2,tokens = greenTokens))
+        val greenDice = Dice(PlayerColors.GREEN,DiceState.READY,binding.ivDice2)
+        players.add(Player(2,"Player 2",PlayerColors.GREEN,PlayerNumbers.PLAYER_2,tokens = greenTokens,dice = greenDice))
+
 
         val redTokens = mutableListOf<Token>()
         redTokens.add(Token(1,PlayerColors.RED,26,binding.ivRed1))
         redTokens.add(Token(2,PlayerColors.RED,26,binding.ivRed2))
         redTokens.add(Token(3,PlayerColors.RED,26,binding.ivRed3))
         redTokens.add(Token(4,PlayerColors.RED,26,binding.ivRed4))
-        players.add(Player(3,"Player 3",PlayerColors.RED,PlayerNumbers.PLAYER_3,tokens = redTokens))
+        val redDice = Dice(PlayerColors.RED,DiceState.READY,binding.ivDice3)
+        players.add(Player(3,"Player 3",PlayerColors.RED,PlayerNumbers.PLAYER_3,tokens = redTokens,dice = redDice))
+
 
         val blueTokens = mutableListOf<Token>()
         blueTokens.add(Token(1,PlayerColors.BLUE,39,binding.ivBlue1))
         blueTokens.add(Token(2,PlayerColors.BLUE,39,binding.ivBlue2))
         blueTokens.add(Token(3,PlayerColors.BLUE,39,binding.ivBlue3))
         blueTokens.add(Token(4,PlayerColors.BLUE,39,binding.ivBlue4))
-        players.add(Player(4,"Player 4",PlayerColors.BLUE,PlayerNumbers.PLAYER_4,tokens = blueTokens))
+
+        val blueDice = Dice(PlayerColors.BLUE,DiceState.READY,binding.ivDice4)
+
+        players.add(Player(4,"Player 4",PlayerColors.BLUE,PlayerNumbers.PLAYER_4,tokens = blueTokens,dice = blueDice))
 
         ludoMap = LudoMap(100,PlayersCount.FOUR_PLAYER, players,restingPlaces,boardTiles,homePaths,diceSpots)
     }
@@ -285,7 +294,7 @@ class GameActivity : AppCompatActivity() {
                 PlayerColors.BLUE->dice = binding.ivDice4
                 else->dice = binding.ivDice4
             }
-//            placeDiceOnSpot(dice,spot.x1,spot.y1)
+
             placeDiceOnSpot(dice,spot.x1,spot.y1)
         }
 

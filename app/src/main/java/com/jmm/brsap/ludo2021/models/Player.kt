@@ -8,5 +8,6 @@ data class Player(
     var isActive : Boolean=false,
     var isWon : Boolean = false,
     var isQuit : Boolean = false,
-    var tokens : List<Token>
+    var tokens : List<Token>,
+    var dice : Dice
 )

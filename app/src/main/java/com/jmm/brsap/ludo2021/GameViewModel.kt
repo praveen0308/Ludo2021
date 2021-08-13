@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 
 class GameViewModel : ViewModel(){
 
-    val activeColor = MutableLiveData<PlayerColors>(PlayerColors.YELLOW)
+    val activeColor = MutableLiveData(PlayerColors.YELLOW)
     val activePlayer = MutableLiveData<Player>()
 
 }
