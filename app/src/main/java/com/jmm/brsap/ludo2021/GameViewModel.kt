@@ -11,4 +11,5 @@ class GameViewModel : ViewModel(){
     val activeColor = MutableLiveData(PlayerColors.YELLOW)
     val activePlayer = MutableLiveData<Player>()
 
+
 }

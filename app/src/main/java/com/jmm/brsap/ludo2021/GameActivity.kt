@@ -87,20 +87,28 @@ class GameActivity : AppCompatActivity() {
 
     private fun subscribeObservers(){
         viewModel.activeColor.observe(this,{color->
+            /*
+                1. show dice for player according to color
+                2. check for token is free
+                    if diceNo. = 6 then active all token
+                    else
+
+            */
+
             lifecycleScope.launch {
                 delay(800)
-                dices.onEach {
-                    it.second.isVisible = it.first == color
+                for (player in ludoMap.players){
+                    if (player.color == color){
+                        player.dice.diceView.isVisible = true
+                    }
+                    else{
+                        player.dice.diceView.isVisible = false
+                    }
                 }
             }
-            for (player in ludoMap.players){
-                if (player.color==color){
-                    viewModel.activePlayer.postValue(player)
-                }
 
-            }
         })
-
+/*
         viewModel.activePlayer.observe(this,{ activePlayer->
             for(player in ludoMap.players){
                 if (player.id == activePlayer.id){
@@ -113,7 +121,7 @@ class GameActivity : AppCompatActivity() {
                 }
             }
 
-        })
+        })*/
     }
 
     private suspend fun animateToken(color:PlayerColors){
@@ -149,7 +157,6 @@ class GameActivity : AppCompatActivity() {
         }
     }
 
-
     private fun getRandomDiceFace(index : Int):Int{
         val diceFaces = HashMap<Int,Int>()
         diceFaces[1] = R.drawable.dice1
@@ -161,9 +168,6 @@ class GameActivity : AppCompatActivity() {
 
         return diceFaces[index]!!
     }
-
-
-
 
     private fun populateViews(){
 
