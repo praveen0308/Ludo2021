@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<animation-list xmlns:android="http://schemas.android.com/apk/res/android"
+    android:oneshot="true">
+    <item android:drawable="@drawable/green_sequence_1" android:duration="200" />
+    <item android:drawable="@drawable/green_sequence_2" android:duration="200" />
+    <item android:drawable="@drawable/green_sequence_3" android:duration="200" />
+    <item android:drawable="@drawable/green_sequence_4" android:duration="200" />
+    <item android:drawable="@drawable/green_sequence_5" android:duration="200" />
+    <item android:drawable="@drawable/green_sequence_6" android:duration="200" />
+    <item android:drawable="@drawable/green_sequence_7" android:duration="200" />
+    <item android:drawable="@drawable/green_sequence_8" android:duration="200" />
+    <item android:drawable="@drawable/green_sequence_9" android:duration="200" />
+    <item android:drawable="@drawable/green_sequence_10" android:duration="200" />
+    <item android:drawable="@drawable/green_sequence_11" android:duration="200" />
+    <item android:drawable="@drawable/green_sequence_12" android:duration="200" />
+    <item android:drawable="@drawable/green_sequence_13" android:duration="200" />
+    <item android:drawable="@drawable/green_sequence_14" android:duration="200" />
+    <item android:drawable="@drawable/green_sequence_15" android:duration="200" />
+    <item android:drawable="@drawable/green_sequence_16" android:duration="200" />
+    <item android:drawable="@drawable/green_sequence_17" android:duration="200" />
+    <item android:drawable="@drawable/green_sequence_18" android:duration="200" />
+    <item android:drawable="@drawable/green_sequence_19" android:duration="200" />
+    <item android:drawable="@drawable/green_sequence_20" android:duration="200" />
+    <item android:drawable="@drawable/green_sequence_21" android:duration="200" />
+    <item android:drawable="@drawable/green_sequence_22" android:duration="200" />
+    <item android:drawable="@drawable/green_sequence_23" android:duration="200" />
+    <item android:drawable="@drawable/green_sequence_24" android:duration="200" />
+
+
+</animation-list>

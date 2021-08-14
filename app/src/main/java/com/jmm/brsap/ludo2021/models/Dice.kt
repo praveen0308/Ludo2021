@@ -5,5 +5,6 @@ import android.widget.ImageView
 data class Dice(
     val color:PlayerColors,
     var state:DiceState,
-    val diceView : ImageView
+    val diceView : ImageView,
+    var outCome:Int = 0
 )

@@ -21,7 +21,27 @@ enum class PlayersCount{
 }
 
 enum class DiceState{
-    WAITING,    // dice is waiting for player to move a token
+    /*
+    *
+    * READY >>> dice is visible and clickable
+    *
+    * SPINNING >>> dice animation is visible and non clickable
+    *
+    * WAITING >>> dice is visible but not clickable, waiting for player to move token
+    *
+    * IDLE >>> dice is visible and not clickable , soon will be disappeared then will rest
+    *
+    * REST >>> dice is invisible and not clickable, when other players playing chance
+    *
+    * */
+
+
+
     READY,      // player had already moved a token or ready to play
-    SPINNING    // dice is spinning
+    SPINNING,   // dice is spinning
+    WAITING,    // dice is waiting for player to move a token
+    IDLE,       // dice is steady with no action
+    REST,        // dice will be invisible and non clickable
+
+
 }

@@ -1,5 +1,6 @@
 package com.jmm.brsap.ludo2021
 
+import android.graphics.drawable.AnimationDrawable
 import android.media.Image
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -15,7 +16,7 @@ import com.jmm.brsap.ludo2021.models.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class GameActivity : AppCompatActivity() {
+class GameActivity : AppCompatActivity(),View.OnClickListener {
 
     private val viewModel by viewModels<GameViewModel>()
     private lateinit var ludoMap: LudoMap
@@ -43,6 +44,8 @@ class GameActivity : AppCompatActivity() {
 //    private val greenTokens = mutableListOf<Pair<Int,ImageView>>()
 //    private val redTokens = mutableListOf<Pair<Int,ImageView>>()
 //    private val blueTokens = mutableListOf<Pair<Int,ImageView>>()
+
+    private lateinit var activeColor : PlayerColors
     private val colors = hashMapOf<Int,PlayerColors>()
 
     private val TAG = "GameActivity"
@@ -66,19 +69,19 @@ class GameActivity : AppCompatActivity() {
         binding.apply {
 
             ivDice1.setOnClickListener {
-                performDiceClick(1)
+                performDiceClick()
             }
 
             ivDice2.setOnClickListener {
-                performDiceClick(2)
+                performDiceClick()
             }
 
             ivDice3.setOnClickListener {
-                performDiceClick(3)
+                performDiceClick()
             }
 
             ivDice4.setOnClickListener {
-                performDiceClick(4)
+                performDiceClick()
             }
         }
 
@@ -94,34 +97,137 @@ class GameActivity : AppCompatActivity() {
                     else
 
             */
+            activeColor = color
 
-            lifecycleScope.launch {
-                delay(800)
-                for (player in ludoMap.players){
-                    if (player.color == color){
-                        player.dice.diceView.isVisible = true
-                    }
-                    else{
-                        player.dice.diceView.isVisible = false
-                    }
+            when(activeColor){
+                PlayerColors.YELLOW->{
+                    viewModel.yellowDiceState.postValue(DiceState.READY)
+                }
+                PlayerColors.GREEN->{
+                    viewModel.greenDiceState.postValue(DiceState.READY)
+                }
+                PlayerColors.RED->{
+                    viewModel.redDiceState.postValue(DiceState.READY)
+                }
+                PlayerColors.BLUE->{
+                    viewModel.blueDiceState.postValue(DiceState.READY)
                 }
             }
 
         })
-/*
-        viewModel.activePlayer.observe(this,{ activePlayer->
-            for(player in ludoMap.players){
-                if (player.id == activePlayer.id){
-                    for(token in player.tokens){
-                        lifecycleScope.launch {
-                            while (true) animateToken(token.color)
-                        }
 
-                    }
+        viewModel.yellowDiceState.observe(this,{state->
+            ludoMap.players[0].dice.state = state
+            when(state){
+                DiceState.READY->{
+                    ludoMap.players[0].dice.diceView.isVisible = true
+                    ludoMap.players[0].dice.diceView.isClickable = true
+
+                }
+                DiceState.WAITING->{
+                    ludoMap.players[0].dice.diceView.isVisible = true
+                    ludoMap.players[0].dice.diceView.isClickable = false
+                }
+                DiceState.SPINNING->{
+                    ludoMap.players[0].dice.diceView.isVisible = true
+                    ludoMap.players[0].dice.diceView.isClickable = false
+                }
+                DiceState.IDLE->{
+                    ludoMap.players[0].dice.diceView.isVisible = true
+                    ludoMap.players[0].dice.diceView.isClickable = false
+                }
+                DiceState.REST->{
+                    ludoMap.players[0].dice.diceView.isVisible = false
+                    ludoMap.players[0].dice.diceView.isClickable = false
                 }
             }
 
-        })*/
+        })
+        viewModel.greenDiceState.observe(this,{state->
+            ludoMap.players[1].dice.state = state
+            when(state){
+                DiceState.READY->{
+                    ludoMap.players[1].dice.diceView.isVisible = true
+                    ludoMap.players[1].dice.diceView.isClickable = true
+
+                }
+                DiceState.WAITING->{
+                    ludoMap.players[1].dice.diceView.isVisible = true
+                    ludoMap.players[1].dice.diceView.isClickable = false
+                }
+                DiceState.SPINNING->{
+                    ludoMap.players[1].dice.diceView.isVisible = true
+                    ludoMap.players[1].dice.diceView.isClickable = false
+                }
+                DiceState.IDLE->{
+                    ludoMap.players[1].dice.diceView.isVisible = true
+                    ludoMap.players[1].dice.diceView.isClickable = false
+                }
+                DiceState.REST->{
+                    ludoMap.players[1].dice.diceView.isVisible = false
+                    ludoMap.players[1].dice.diceView.isClickable = false
+                }
+
+            }
+
+        })
+
+        viewModel.redDiceState.observe(this,{state->
+            ludoMap.players[2].dice.state = state
+            when(state){
+                DiceState.READY->{
+                    ludoMap.players[2].dice.diceView.isVisible = true
+                    ludoMap.players[2].dice.diceView.isClickable = true
+
+                }
+                DiceState.WAITING->{
+                    ludoMap.players[2].dice.diceView.isVisible = true
+                    ludoMap.players[2].dice.diceView.isClickable = false
+                }
+                DiceState.SPINNING->{
+                    ludoMap.players[2].dice.diceView.isVisible = true
+                    ludoMap.players[2].dice.diceView.isClickable = false
+                }
+                DiceState.IDLE->{
+                    ludoMap.players[2].dice.diceView.isVisible = true
+                    ludoMap.players[2].dice.diceView.isClickable = false
+                }
+                DiceState.REST->{
+                    ludoMap.players[2].dice.diceView.isVisible = false
+                    ludoMap.players[2].dice.diceView.isClickable = false
+                }
+            }
+
+        })
+
+        viewModel.blueDiceState.observe(this,{state->
+            ludoMap.players[3].dice.state = state
+            when(state){
+                DiceState.READY->{
+                    ludoMap.players[3].dice.diceView.isVisible = true
+                    ludoMap.players[3].dice.diceView.isClickable = true
+
+                }
+                DiceState.WAITING->{
+                    ludoMap.players[3].dice.diceView.isVisible = true
+                    ludoMap.players[3].dice.diceView.isClickable = false
+                }
+                DiceState.SPINNING->{
+                    ludoMap.players[3].dice.diceView.isVisible = true
+                    ludoMap.players[3].dice.diceView.isClickable = false
+                }
+                DiceState.IDLE->{
+                    ludoMap.players[3].dice.diceView.isVisible = true
+                    ludoMap.players[3].dice.diceView.isClickable = false
+                }
+                DiceState.REST->{
+                    ludoMap.players[3].dice.diceView.isVisible = false
+                    ludoMap.players[3].dice.diceView.isClickable = false
+                }
+            }
+
+        })
+
     }
 
     private suspend fun animateToken(color:PlayerColors){
@@ -135,38 +241,162 @@ class GameActivity : AppCompatActivity() {
                 }
             }
         }
-
     }
-    private fun performDiceClick(index: Int){
-        var ivDice = ImageView(this)
+    private fun performDiceClick(){
+        when(activeColor){
+            PlayerColors.YELLOW->{
+                viewModel.yellowDiceState.postValue(DiceState.SPINNING)
+                ludoMap.players[0].dice.diceView.setBackgroundResource(R.drawable.green_dice_animation)
+                val diceAnimation =ludoMap.players[0].dice.diceView.background as AnimationDrawable
 
-        for (dice in dices){
-            if (dice.first == colors[index]) ivDice = dice.second
+                ludoMap.players[0].dice.diceView.animate()
+                    .scaleX(1.5f)
+                    .scaleY(1.5f)
+                    .rotation(-45f)
+                    .rotationY(1080f).withStartAction {
+                        diceAnimation.start()
+                    }.withEndAction {
+                        ludoMap.players[0].dice.diceView.scaleX = 1f
+                        ludoMap.players[0].dice.diceView.scaleY = 1f
+                        ludoMap.players[0].dice.diceView.rotation = 0f
+                        ludoMap.players[0].dice.diceView.rotationY = 0f
+
+
+                        val outcome = (1..6).random()
+                        ludoMap.players[0].dice.outCome = outcome
+                        ludoMap.players[0].dice.diceView.setImageResource(getRandomDiceFace(activeColor,outcome))
+                        viewModel.yellowDiceState.postValue(DiceState.REST)
+                        if (outcome==6){
+                            viewModel.activeColor.postValue(PlayerColors.YELLOW)
+                        }
+                        else{
+                            viewModel.activeColor.postValue(PlayerColors.GREEN)
+                        }
+
+                    }
+            }
+            PlayerColors.GREEN->{
+                viewModel.greenDiceState.postValue(DiceState.SPINNING)
+                ludoMap.players[1].dice.diceView.setBackgroundResource(R.drawable.green_dice_animation)
+                val diceAnimation =ludoMap.players[1].dice.diceView.background as AnimationDrawable
+
+                ludoMap.players[1].dice.diceView.animate()
+                    .scaleX(1.5f)
+                    .scaleY(1.5f)
+                    .rotation(-45f)
+                    .rotationY(1080f).withStartAction {
+                        diceAnimation.start()
+                    }.withEndAction {
+                        ludoMap.players[1].dice.diceView.scaleX = 1f
+                        ludoMap.players[1].dice.diceView.scaleY = 1f
+                        ludoMap.players[1].dice.diceView.rotation = 0f
+                        ludoMap.players[1].dice.diceView.rotationY = 0f
+
+
+                        val outcome = (1..6).random()
+                        ludoMap.players[1].dice.outCome = outcome
+                        ludoMap.players[1].dice.diceView.setImageResource(getRandomDiceFace(activeColor,outcome))
+                        viewModel.greenDiceState.postValue(DiceState.REST)
+                        if (outcome==6){
+                            viewModel.activeColor.postValue(PlayerColors.GREEN)
+                        }
+                        else{
+                            viewModel.activeColor.postValue(PlayerColors.RED)
+                        }
+
+                    }
+            }
+            PlayerColors.RED->{}
+            PlayerColors.BLUE->{}
         }
 
-        ivDice.animate().scaleX(1.5f).scaleY(1.5f).rotation(-45f).rotationY(1080f).setDuration(500).withEndAction {
-            ivDice.scaleX = 1f
-            ivDice.scaleY = 1f
-            ivDice.rotation = 0f
-            ivDice.rotationY = 0f
 
-            val number = (1..6).random()
-            ivDice.setImageResource(getRandomDiceFace(number))
+    }
 
-            if (number!=6) viewModel.activeColor.postValue(colors[if (index<4) index+1 else 1])
+    override fun onClick(v: View?) {
+        v?.let {
+            if (it.isClickable){
+                binding.apply {
+                    when(v){
+                        ivYellow1->{
+
+                        }
+                        ivYellow2->{ }
+                        ivYellow3->{ }
+                        ivYellow4->{ }
+                        ivGreen1->{ }
+                        ivGreen2->{ }
+                        ivGreen3->{ }
+                        ivGreen4->{ }
+                        ivRed1->{ }
+                        ivRed2->{ }
+                        ivRed3->{ }
+                        ivRed4->{ }
+                        ivBlue1->{ }
+                        ivBlue2->{ }
+                        ivBlue3->{ }
+                        ivBlue4->{ }
+                    }
+                }
+
+            }
         }
     }
 
-    private fun getRandomDiceFace(index : Int):Int{
-        val diceFaces = HashMap<Int,Int>()
-        diceFaces[1] = R.drawable.dice1
-        diceFaces[2] = R.drawable.dice2
-        diceFaces[3] = R.drawable.dice3
-        diceFaces[4] = R.drawable.dice4
-        diceFaces[5] = R.drawable.dice5
-        diceFaces[6] = R.drawable.dice6
 
-        return diceFaces[index]!!
+    private fun getRandomDiceFace(color: PlayerColors,index : Int):Int{
+        val yellowDiceFaces = HashMap<Int,Int>()
+        yellowDiceFaces[1] = R.drawable.dice1
+        yellowDiceFaces[2] = R.drawable.dice2
+        yellowDiceFaces[3] = R.drawable.dice3
+        yellowDiceFaces[4] = R.drawable.dice4
+        yellowDiceFaces[5] = R.drawable.dice5
+        yellowDiceFaces[6] = R.drawable.dice6
+
+
+        val greenDiceFaces = HashMap<Int,Int>()
+        greenDiceFaces[1] = R.drawable.dice1
+        greenDiceFaces[2] = R.drawable.dice2
+        greenDiceFaces[3] = R.drawable.dice3
+        greenDiceFaces[4] = R.drawable.dice4
+        greenDiceFaces[5] = R.drawable.dice5
+        greenDiceFaces[6] = R.drawable.dice6
+
+
+
+        val redDiceFaces = HashMap<Int,Int>()
+        redDiceFaces[1] = R.drawable.dice1
+        redDiceFaces[2] = R.drawable.dice2
+        redDiceFaces[3] = R.drawable.dice3
+        redDiceFaces[4] = R.drawable.dice4
+        redDiceFaces[5] = R.drawable.dice5
+        redDiceFaces[6] = R.drawable.dice6
+
+        val blueDiceFaces = HashMap<Int,Int>()
+        blueDiceFaces[1] = R.drawable.dice1
+        blueDiceFaces[2] = R.drawable.dice2
+        blueDiceFaces[3] = R.drawable.dice3
+        blueDiceFaces[4] = R.drawable.dice4
+        blueDiceFaces[5] = R.drawable.dice5
+        blueDiceFaces[6] = R.drawable.dice6
+
+        return when(color){
+            PlayerColors.YELLOW->{
+                yellowDiceFaces[index]!!
+            }
+            PlayerColors.GREEN->{
+                greenDiceFaces[index]!!
+            }
+            PlayerColors.RED->{
+                redDiceFaces[index]!!
+            }
+            PlayerColors.BLUE->{
+                blueDiceFaces[index]!!
+            }
+            else-> 0
+        }
+
+
     }
 
     private fun populateViews(){
