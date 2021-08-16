@@ -17,7 +17,7 @@ import com.jmm.brsap.ludo2021.models.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class GameActivity : AppCompatActivity(){
+class GameActivity : AppCompatActivity() {
 
     private val viewModel by viewModels<GameViewModel>()
     private lateinit var ludoMap: LudoMap
@@ -41,10 +41,6 @@ class GameActivity : AppCompatActivity(){
     private val homePaths = mutableListOf<MutableList<Tile>>()
     private val restingPlaces = mutableListOf<RestingPlace>()
     private val dices = mutableListOf<Pair<PlayerColors, ImageView>>()
-//    private val yellowTokens = mutableListOf<Pair<Int,ImageView>>()
-//    private val greenTokens = mutableListOf<Pair<Int,ImageView>>()
-//    private val redTokens = mutableListOf<Pair<Int,ImageView>>()
-//    private val blueTokens = mutableListOf<Pair<Int,ImageView>>()
 
     private lateinit var activeColor: PlayerColors
     private val colors = hashMapOf<Int, PlayerColors>()
@@ -86,19 +82,49 @@ class GameActivity : AppCompatActivity(){
             }
 
             ivYellow1.setOnClickListener {
-                Toast.makeText(this@GameActivity, it.id.toString(), Toast.LENGTH_SHORT).show()
+                if (it.isClickable) {
+                    Toast.makeText(this@GameActivity, "ivYellow1", Toast.LENGTH_SHORT).show()
+
+                    if (ludoMap.players[0].tokens[0].isFree) {
+                        val point = ludoMap.players[0].tokens[0].standingAt + ludoMap.players[0].dice.outCome
+
+                        placeTokenOnPath(
+                            it,
+                            ludoMap.tiles[point].column,
+                            ludoMap.tiles[point].row
+                        )
+                    } else {
+                        val startingPoint = ludoMap.players[0].tokens[0].startingFrom
+                        placeTokenOnPath(
+                            it,
+                            ludoMap.tiles[startingPoint].column,
+                            ludoMap.tiles[startingPoint].row
+                        )
+                        ludoMap.players[0].tokens[0].standingAt = 0
+
+                    }
+
+
+                }
+
             }
 
             ivYellow2.setOnClickListener {
-                Toast.makeText(this@GameActivity, it.id.toString(), Toast.LENGTH_SHORT).show()
+                if (it.isClickable) {
+                    Toast.makeText(this@GameActivity, it.id.toString(), Toast.LENGTH_SHORT).show()
+                }
             }
 
             ivYellow3.setOnClickListener {
-                Toast.makeText(this@GameActivity, it.id.toString(), Toast.LENGTH_SHORT).show()
+                if (it.isClickable) {
+                    Toast.makeText(this@GameActivity, it.id.toString(), Toast.LENGTH_SHORT).show()
+                }
             }
 
             ivYellow4.setOnClickListener {
-                Toast.makeText(this@GameActivity, it.id.toString(), Toast.LENGTH_SHORT).show()
+                if (it.isClickable) {
+                    Toast.makeText(this@GameActivity, it.id.toString(), Toast.LENGTH_SHORT).show()
+                }
             }
 
 
@@ -186,6 +212,47 @@ class GameActivity : AppCompatActivity(){
 
         viewModel.yellowDiceState.observe(this, { state ->
             ludoMap.players[0].dice.state = state
+
+
+            ludoMap.players[0].tokens[0].tokenImage.apply {
+                if (state == DiceState.WAITING) {
+                    if (ludoMap.players[0].dice.outCome == 6) {
+                        this.isClickable = true
+                    } else {
+                        if (ludoMap.players[0].tokens[0].isFree) {
+                            this.isClickable = true
+                        } else this.isClickable = false
+                    }
+                } else isClickable = false
+
+//                    isClickable = state == DiceState.WAITING
+//                    animate().alpha(0.7f).setDuration(500).withEndAction {
+//                        this.alpha = 1f
+//                    }
+            }
+
+            ludoMap.players[0].tokens[1].tokenImage.apply {
+                isClickable = state == DiceState.WAITING
+//                    animate().alpha(0.7f).setDuration(500).withEndAction {
+//                        this.alpha = 1f
+//                    }
+            }
+            ludoMap.players[0].tokens[2].tokenImage.apply {
+                isClickable = state == DiceState.WAITING
+//                    animate().alpha(0.7f).setDuration(500).withEndAction {
+//                        this.alpha = 1f
+//                    }
+            }
+
+            ludoMap.players[0].tokens[3].tokenImage.apply {
+                isClickable = state == DiceState.WAITING
+//                    animate().alpha(0.7f).setDuration(500).withEndAction {
+//                        this.alpha = 1f
+//                    }
+            }
+
+
+
             when (state) {
                 DiceState.READY -> {
                     ludoMap.players[0].dice.diceView.isVisible = true
@@ -195,6 +262,28 @@ class GameActivity : AppCompatActivity(){
                 DiceState.WAITING -> {
                     ludoMap.players[0].dice.diceView.isVisible = true
                     ludoMap.players[0].dice.diceView.isClickable = false
+
+//                    lifecycleScope.launch {
+//                        delay(700)
+//                        if (ludoMap.players[0].dice.outCome == 6) {
+//
+//                            viewModel.activeColor.postValue(PlayerColors.YELLOW)
+//                        } else {
+//                            for (token in ludoMap.players[0].tokens) {
+//                                if (token.isFree && token.canMove) {
+//
+//                                    token.tokenImage.animate().alpha(0.5f).withEndAction {
+//                                        token.tokenImage.alpha = 1f
+//                                    }
+//                                }
+//                            }
+//
+//                            viewModel.activeColor.postValue(PlayerColors.GREEN)
+//                        }
+//
+//                        viewModel.yellowDiceState.postValue(DiceState.REST)
+//                    }
+
                 }
                 DiceState.SPINNING -> {
                     ludoMap.players[0].dice.diceView.isVisible = true
@@ -279,6 +368,7 @@ class GameActivity : AppCompatActivity(){
                 DiceState.WAITING -> {
                     ludoMap.players[3].dice.diceView.isVisible = true
                     ludoMap.players[3].dice.diceView.isClickable = false
+
                 }
                 DiceState.SPINNING -> {
                     ludoMap.players[3].dice.diceView.isVisible = true
@@ -298,18 +388,7 @@ class GameActivity : AppCompatActivity(){
 
     }
 
-    private suspend fun animateToken(color: PlayerColors) {
-        for (player in ludoMap.players) {
-            if (player.color == color) {
-                player.tokens.onEach {
-                    it.tokenImage.animate().alpha(0.7f).setDuration(500).withEndAction {
-                        it.tokenImage.alpha = 1f
 
-                    }
-                }
-            }
-        }
-    }
 
     private fun performDiceClick() {
         when (activeColor) {
@@ -340,29 +419,6 @@ class GameActivity : AppCompatActivity(){
                             )
                         )
                         viewModel.yellowDiceState.postValue(DiceState.WAITING)
-
-                        lifecycleScope.launch {
-                            delay(700)
-
-                            if (outcome == 6) {
-                                viewModel.activeColor.postValue(PlayerColors.YELLOW)
-                            } else {
-                                viewModel.yellowDiceState.postValue(DiceState.WAITING)
-                                for(token in ludoMap.players[0].tokens){
-                                    if (token.isFree && token.canMove){
-
-                                        token.tokenImage.animate().alpha(0.5f).withEndAction {
-                                            token.tokenImage.alpha = 1f
-                                        }
-                                    }
-                                }
-
-                                viewModel.activeColor.postValue(PlayerColors.GREEN)
-                            }
-
-                            viewModel.yellowDiceState.postValue(DiceState.REST)
-                        }
-
 
                     }
             }
@@ -478,6 +534,16 @@ class GameActivity : AppCompatActivity(){
 
     }
 
+
+    private fun placeTokenOnPath(view: View, x: Int, y: Int) {
+        view.layoutParams.height = (3 * d / 4).toInt()
+        view.layoutParams.width = (3 * d / 4).toInt()
+
+        val layoutParams = view.layoutParams as ConstraintLayout.LayoutParams
+        layoutParams.marginStart = (column[x-1]+d/10).toInt()
+        layoutParams.topMargin = (row[y-1]+d/10).toInt()
+        view.layoutParams = layoutParams
+    }
 
     private fun getRandomDiceFace(color: PlayerColors, index: Int): Int {
         val yellowDiceFaces = HashMap<Int, Int>()
@@ -599,9 +665,9 @@ class GameActivity : AppCompatActivity(){
         val players = mutableListOf<Player>()
         val yellowTokens = mutableListOf<Token>()
         yellowTokens.add(Token(1, PlayerColors.YELLOW, 0, binding.ivYellow1))
-        yellowTokens.add(Token(2, PlayerColors.YELLOW, 0, binding.ivYellow1))
-        yellowTokens.add(Token(3, PlayerColors.YELLOW, 0, binding.ivYellow1))
-        yellowTokens.add(Token(4, PlayerColors.YELLOW, 0, binding.ivYellow1))
+        yellowTokens.add(Token(2, PlayerColors.YELLOW, 0, binding.ivYellow2))
+        yellowTokens.add(Token(3, PlayerColors.YELLOW, 0, binding.ivYellow3))
+        yellowTokens.add(Token(4, PlayerColors.YELLOW, 0, binding.ivYellow4))
         val yellowDice = Dice(PlayerColors.YELLOW, DiceState.READY, binding.ivDice1)
         players.add(
             Player(

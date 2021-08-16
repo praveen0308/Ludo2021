@@ -10,5 +10,6 @@ data class Token(
     var standingAt : Int=-1,
     var isFree : Boolean = false,
     var isWon : Boolean = false,
-    var canMove : Boolean = false
+    var canMove : Boolean = false,
+    var stepsCompleted : Int = 0
 )
