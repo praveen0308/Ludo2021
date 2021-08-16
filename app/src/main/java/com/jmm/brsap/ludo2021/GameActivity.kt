@@ -81,104 +81,101 @@ class GameActivity : AppCompatActivity() {
                 performDiceClick()
             }
 
+            // yellow tokens
+
             ivYellow1.setOnClickListener {
-                if (it.isClickable) {
-                    Toast.makeText(this@GameActivity, "ivYellow1", Toast.LENGTH_SHORT).show()
-
-                    if (ludoMap.players[0].tokens[0].isFree) {
-                        val point = ludoMap.players[0].tokens[0].standingAt + ludoMap.players[0].dice.outCome
-
-                        placeTokenOnPath(
-                            it,
-                            ludoMap.tiles[point].column,
-                            ludoMap.tiles[point].row
-                        )
-                    } else {
-                        val startingPoint = ludoMap.players[0].tokens[0].startingFrom
-                        placeTokenOnPath(
-                            it,
-                            ludoMap.tiles[startingPoint].column,
-                            ludoMap.tiles[startingPoint].row
-                        )
-                        ludoMap.players[0].tokens[0].standingAt = 0
-
-                    }
-
-
-                }
-
+                if (it.isClickable) moveToken(it, PlayerColors.YELLOW, PlayerColors.GREEN, 0, 0)
             }
-
             ivYellow2.setOnClickListener {
-                if (it.isClickable) {
-                    Toast.makeText(this@GameActivity, it.id.toString(), Toast.LENGTH_SHORT).show()
-                }
+                if (it.isClickable) moveToken(it, PlayerColors.YELLOW, PlayerColors.GREEN, 0, 1)
             }
-
             ivYellow3.setOnClickListener {
-                if (it.isClickable) {
-                    Toast.makeText(this@GameActivity, it.id.toString(), Toast.LENGTH_SHORT).show()
-                }
+                if (it.isClickable) moveToken(it, PlayerColors.YELLOW, PlayerColors.GREEN, 0, 2)
             }
-
             ivYellow4.setOnClickListener {
-                if (it.isClickable) {
-                    Toast.makeText(this@GameActivity, it.id.toString(), Toast.LENGTH_SHORT).show()
-                }
+                if (it.isClickable) moveToken(it, PlayerColors.YELLOW, PlayerColors.GREEN, 0, 3)
             }
 
+            // green tokens
 
             ivGreen1.setOnClickListener {
-                Toast.makeText(this@GameActivity, it.id.toString(), Toast.LENGTH_SHORT).show()
+                if (it.isClickable) moveToken(it, PlayerColors.GREEN, PlayerColors.RED, 1, 0)
             }
-
-
             ivGreen2.setOnClickListener {
-                Toast.makeText(this@GameActivity, it.id.toString(), Toast.LENGTH_SHORT).show()
+                if (it.isClickable) moveToken(it, PlayerColors.GREEN, PlayerColors.RED, 1, 1)
             }
             ivGreen3.setOnClickListener {
-                Toast.makeText(this@GameActivity, it.id.toString(), Toast.LENGTH_SHORT).show()
+                if (it.isClickable) moveToken(it, PlayerColors.GREEN, PlayerColors.RED, 1, 2)
             }
             ivGreen4.setOnClickListener {
-                Toast.makeText(this@GameActivity, it.id.toString(), Toast.LENGTH_SHORT).show()
+                if (it.isClickable) moveToken(it, PlayerColors.GREEN, PlayerColors.RED, 1, 3)
             }
 
+            // red tokens
 
             ivRed1.setOnClickListener {
-                Toast.makeText(this@GameActivity, it.id.toString(), Toast.LENGTH_SHORT).show()
+                if (it.isClickable) moveToken(it, PlayerColors.RED, PlayerColors.BLUE, 2, 0)
             }
-
             ivRed2.setOnClickListener {
-                Toast.makeText(this@GameActivity, it.id.toString(), Toast.LENGTH_SHORT).show()
+                if (it.isClickable) moveToken(it, PlayerColors.RED, PlayerColors.BLUE, 2, 1)
             }
-
             ivRed3.setOnClickListener {
-                Toast.makeText(this@GameActivity, it.id.toString(), Toast.LENGTH_SHORT).show()
+                if (it.isClickable) moveToken(it, PlayerColors.RED, PlayerColors.BLUE, 2, 2)
+            }
+            ivRed4.setOnClickListener {
+                if (it.isClickable) moveToken(it, PlayerColors.RED, PlayerColors.BLUE, 2, 3)
             }
 
-            ivRed4.setOnClickListener {
-                Toast.makeText(this@GameActivity, it.id.toString(), Toast.LENGTH_SHORT).show()
-            }
+            // blue tokens
 
             ivBlue1.setOnClickListener {
-                Toast.makeText(this@GameActivity, it.id.toString(), Toast.LENGTH_SHORT).show()
+                if (it.isClickable) moveToken(it, PlayerColors.BLUE, PlayerColors.YELLOW, 3, 0)
             }
-
             ivBlue2.setOnClickListener {
-                Toast.makeText(this@GameActivity, it.id.toString(), Toast.LENGTH_SHORT).show()
+                if (it.isClickable) moveToken(it, PlayerColors.BLUE, PlayerColors.YELLOW, 3, 1)
             }
-
             ivBlue3.setOnClickListener {
-                Toast.makeText(this@GameActivity, it.id.toString(), Toast.LENGTH_SHORT).show()
+                if (it.isClickable) moveToken(it, PlayerColors.BLUE, PlayerColors.YELLOW, 3, 2)
             }
-
             ivBlue4.setOnClickListener {
-                Toast.makeText(this@GameActivity, it.id.toString(), Toast.LENGTH_SHORT).show()
+                if (it.isClickable) moveToken(it, PlayerColors.BLUE, PlayerColors.YELLOW, 3, 3)
             }
-
 
         }
 
+
+    }
+
+    private fun moveToken(
+        view: View,
+        playerColor: PlayerColors,
+        nextPlayerColor: PlayerColors,
+        playerNo: Int,
+        tokenNo: Int
+    ) {
+        if (ludoMap.players[playerNo].tokens[tokenNo].isFree) {
+            val point =
+                ludoMap.players[playerNo].tokens[tokenNo].standingAt + ludoMap.players[playerNo].dice.outCome
+            placeTokenOnPath(
+                view,
+                ludoMap.tiles[point].column,
+                ludoMap.tiles[point].row
+            )
+            if (ludoMap.players[playerNo].dice.outCome == 6) viewModel.activeColor.postValue(
+                playerColor
+            )
+            else viewModel.activeColor.postValue(nextPlayerColor)
+        } else {
+            val startingPoint = ludoMap.players[playerNo].tokens[tokenNo].startingFrom
+            placeTokenOnPath(
+                view,
+                ludoMap.tiles[startingPoint].column,
+                ludoMap.tiles[startingPoint].row
+            )
+            ludoMap.players[playerNo].tokens[tokenNo].isFree = true
+            ludoMap.players[playerNo].tokens[tokenNo].standingAt = startingPoint
+            viewModel.activeColor.postValue(playerColor)
+        }
 
     }
 
@@ -196,14 +193,27 @@ class GameActivity : AppCompatActivity() {
             when (activeColor) {
                 PlayerColors.YELLOW -> {
                     viewModel.yellowDiceState.postValue(DiceState.READY)
+                    viewModel.greenDiceState.postValue(DiceState.REST)
+                    viewModel.redDiceState.postValue(DiceState.REST)
+                    viewModel.blueDiceState.postValue(DiceState.REST)
+
                 }
                 PlayerColors.GREEN -> {
+                    viewModel.yellowDiceState.postValue(DiceState.REST)
                     viewModel.greenDiceState.postValue(DiceState.READY)
+                    viewModel.redDiceState.postValue(DiceState.REST)
+                    viewModel.blueDiceState.postValue(DiceState.REST)
                 }
                 PlayerColors.RED -> {
+                    viewModel.yellowDiceState.postValue(DiceState.REST)
+                    viewModel.greenDiceState.postValue(DiceState.REST)
                     viewModel.redDiceState.postValue(DiceState.READY)
+                    viewModel.blueDiceState.postValue(DiceState.REST)
                 }
                 PlayerColors.BLUE -> {
+                    viewModel.yellowDiceState.postValue(DiceState.REST)
+                    viewModel.greenDiceState.postValue(DiceState.REST)
+                    viewModel.redDiceState.postValue(DiceState.REST)
                     viewModel.blueDiceState.postValue(DiceState.READY)
                 }
             }
@@ -211,208 +221,254 @@ class GameActivity : AppCompatActivity() {
         })
 
         viewModel.yellowDiceState.observe(this, { state ->
-            ludoMap.players[0].dice.state = state
+            val playerNo = 0
+            val nextPlayerColor = PlayerColors.GREEN
+            ludoMap.players[playerNo].dice.state = state
+
+            val isAnyOneFree = ludoMap.players[playerNo].tokens.any { it.isFree }
 
 
-            ludoMap.players[0].tokens[0].tokenImage.apply {
-                if (state == DiceState.WAITING) {
-                    if (ludoMap.players[0].dice.outCome == 6) {
-                        this.isClickable = true
-                    } else {
-                        if (ludoMap.players[0].tokens[0].isFree) {
+            for (tokenNo in 0..3) {
+                ludoMap.players[playerNo].tokens[tokenNo].tokenImage.apply {
+                    if (state == DiceState.WAITING) {
+                        if (ludoMap.players[playerNo].dice.outCome == 6) {
                             this.isClickable = true
-                        } else this.isClickable = false
+                        } else {
+
+                            if (ludoMap.players[playerNo].tokens[tokenNo].isFree) {
+                                this.isClickable = true
+                            } else {
+                                this.isClickable = false
+
+                            }
+                        }
+                    } else isClickable = false
+                }
+            }
+            if (state == DiceState.WAITING) {
+                if (ludoMap.players[playerNo].dice.outCome != 6) {
+
+
+                if (!isAnyOneFree) {
+                    lifecycleScope.launch {
+                        delay(700)
+                        viewModel.activeColor.postValue(nextPlayerColor)
                     }
-                } else isClickable = false
-
-//                    isClickable = state == DiceState.WAITING
-//                    animate().alpha(0.7f).setDuration(500).withEndAction {
-//                        this.alpha = 1f
-//                    }
+                }
+                }
             }
-
-            ludoMap.players[0].tokens[1].tokenImage.apply {
-                isClickable = state == DiceState.WAITING
-//                    animate().alpha(0.7f).setDuration(500).withEndAction {
-//                        this.alpha = 1f
-//                    }
-            }
-            ludoMap.players[0].tokens[2].tokenImage.apply {
-                isClickable = state == DiceState.WAITING
-//                    animate().alpha(0.7f).setDuration(500).withEndAction {
-//                        this.alpha = 1f
-//                    }
-            }
-
-            ludoMap.players[0].tokens[3].tokenImage.apply {
-                isClickable = state == DiceState.WAITING
-//                    animate().alpha(0.7f).setDuration(500).withEndAction {
-//                        this.alpha = 1f
-//                    }
-            }
-
-
 
             when (state) {
                 DiceState.READY -> {
-                    ludoMap.players[0].dice.diceView.isVisible = true
-                    ludoMap.players[0].dice.diceView.isClickable = true
+                    ludoMap.players[playerNo].dice.diceView.isVisible = true
+                    ludoMap.players[playerNo].dice.diceView.isClickable = true
 
                 }
                 DiceState.WAITING -> {
-                    ludoMap.players[0].dice.diceView.isVisible = true
-                    ludoMap.players[0].dice.diceView.isClickable = false
-
-//                    lifecycleScope.launch {
-//                        delay(700)
-//                        if (ludoMap.players[0].dice.outCome == 6) {
-//
-//                            viewModel.activeColor.postValue(PlayerColors.YELLOW)
-//                        } else {
-//                            for (token in ludoMap.players[0].tokens) {
-//                                if (token.isFree && token.canMove) {
-//
-//                                    token.tokenImage.animate().alpha(0.5f).withEndAction {
-//                                        token.tokenImage.alpha = 1f
-//                                    }
-//                                }
-//                            }
-//
-//                            viewModel.activeColor.postValue(PlayerColors.GREEN)
-//                        }
-//
-//                        viewModel.yellowDiceState.postValue(DiceState.REST)
-//                    }
+                    ludoMap.players[playerNo].dice.diceView.isVisible = true
+                    ludoMap.players[playerNo].dice.diceView.isClickable = false
 
                 }
                 DiceState.SPINNING -> {
-                    ludoMap.players[0].dice.diceView.isVisible = true
-                    ludoMap.players[0].dice.diceView.isClickable = false
+                    ludoMap.players[playerNo].dice.diceView.isVisible = true
+                    ludoMap.players[playerNo].dice.diceView.isClickable = false
                 }
                 DiceState.IDLE -> {
-                    ludoMap.players[0].dice.diceView.isVisible = true
-                    ludoMap.players[0].dice.diceView.isClickable = false
+                    ludoMap.players[playerNo].dice.diceView.isVisible = true
+                    ludoMap.players[playerNo].dice.diceView.isClickable = false
                 }
                 DiceState.REST -> {
-                    ludoMap.players[0].dice.diceView.isVisible = false
-                    ludoMap.players[0].dice.diceView.isClickable = false
+                    ludoMap.players[playerNo].dice.diceView.isVisible = false
+                    ludoMap.players[playerNo].dice.diceView.isClickable = false
                 }
             }
 
         })
         viewModel.greenDiceState.observe(this, { state ->
-            ludoMap.players[1].dice.state = state
+            val playerNo = 1
+            val nextPlayerColor = PlayerColors.RED
+            for (tokenNo in 0..3) {
+                ludoMap.players[playerNo].dice.state = state
+                ludoMap.players[playerNo].tokens[tokenNo].tokenImage.apply {
+                    if (state == DiceState.WAITING) {
+                        if (ludoMap.players[playerNo].dice.outCome == 6) {
+                            this.isClickable = true
+                        } else {
+                            if (ludoMap.players[playerNo].tokens[tokenNo].isFree) {
+                                this.isClickable = true
+                            } else {
+                                this.isClickable = false
+                                lifecycleScope.launch {
+                                    delay(700)
+                                    viewModel.activeColor.postValue(nextPlayerColor)
+                                }
+                            }
+                        }
+                    } else isClickable = false
+                }
+            }
+
+
             when (state) {
                 DiceState.READY -> {
-                    ludoMap.players[1].dice.diceView.isVisible = true
-                    ludoMap.players[1].dice.diceView.isClickable = true
+                    ludoMap.players[playerNo].dice.diceView.isVisible = true
+                    ludoMap.players[playerNo].dice.diceView.isClickable = true
 
                 }
                 DiceState.WAITING -> {
-                    ludoMap.players[1].dice.diceView.isVisible = true
-                    ludoMap.players[1].dice.diceView.isClickable = false
+                    ludoMap.players[playerNo].dice.diceView.isVisible = true
+                    ludoMap.players[playerNo].dice.diceView.isClickable = false
+
                 }
                 DiceState.SPINNING -> {
-                    ludoMap.players[1].dice.diceView.isVisible = true
-                    ludoMap.players[1].dice.diceView.isClickable = false
+                    ludoMap.players[playerNo].dice.diceView.isVisible = true
+                    ludoMap.players[playerNo].dice.diceView.isClickable = false
                 }
                 DiceState.IDLE -> {
-                    ludoMap.players[1].dice.diceView.isVisible = true
-                    ludoMap.players[1].dice.diceView.isClickable = false
+                    ludoMap.players[playerNo].dice.diceView.isVisible = true
+                    ludoMap.players[playerNo].dice.diceView.isClickable = false
                 }
                 DiceState.REST -> {
-                    ludoMap.players[1].dice.diceView.isVisible = false
-                    ludoMap.players[1].dice.diceView.isClickable = false
+                    ludoMap.players[playerNo].dice.diceView.isVisible = false
+                    ludoMap.players[playerNo].dice.diceView.isClickable = false
                 }
-
             }
 
         })
 
         viewModel.redDiceState.observe(this, { state ->
-            ludoMap.players[2].dice.state = state
+            val playerNo = 2
+            val nextPlayerColor = PlayerColors.BLUE
+            for (tokenNo in 0..3) {
+                ludoMap.players[playerNo].dice.state = state
+                ludoMap.players[playerNo].tokens[tokenNo].tokenImage.apply {
+                    if (state == DiceState.WAITING) {
+                        if (ludoMap.players[playerNo].dice.outCome == 6) {
+                            this.isClickable = true
+                        } else {
+                            if (ludoMap.players[playerNo].tokens[tokenNo].isFree) {
+                                this.isClickable = true
+                            } else {
+                                this.isClickable = false
+                                lifecycleScope.launch {
+                                    delay(700)
+                                    viewModel.activeColor.postValue(nextPlayerColor)
+                                }
+                            }
+                        }
+                    } else isClickable = false
+                }
+            }
+
+
             when (state) {
                 DiceState.READY -> {
-                    ludoMap.players[2].dice.diceView.isVisible = true
-                    ludoMap.players[2].dice.diceView.isClickable = true
+                    ludoMap.players[playerNo].dice.diceView.isVisible = true
+                    ludoMap.players[playerNo].dice.diceView.isClickable = true
 
                 }
                 DiceState.WAITING -> {
-                    ludoMap.players[2].dice.diceView.isVisible = true
-                    ludoMap.players[2].dice.diceView.isClickable = false
+                    ludoMap.players[playerNo].dice.diceView.isVisible = true
+                    ludoMap.players[playerNo].dice.diceView.isClickable = false
+
                 }
                 DiceState.SPINNING -> {
-                    ludoMap.players[2].dice.diceView.isVisible = true
-                    ludoMap.players[2].dice.diceView.isClickable = false
+                    ludoMap.players[playerNo].dice.diceView.isVisible = true
+                    ludoMap.players[playerNo].dice.diceView.isClickable = false
                 }
                 DiceState.IDLE -> {
-                    ludoMap.players[2].dice.diceView.isVisible = true
-                    ludoMap.players[2].dice.diceView.isClickable = false
+                    ludoMap.players[playerNo].dice.diceView.isVisible = true
+                    ludoMap.players[playerNo].dice.diceView.isClickable = false
                 }
                 DiceState.REST -> {
-                    ludoMap.players[2].dice.diceView.isVisible = false
-                    ludoMap.players[2].dice.diceView.isClickable = false
+                    ludoMap.players[playerNo].dice.diceView.isVisible = false
+                    ludoMap.players[playerNo].dice.diceView.isClickable = false
                 }
             }
+
 
         })
 
         viewModel.blueDiceState.observe(this, { state ->
-            ludoMap.players[3].dice.state = state
+            val playerNo = 3
+            val nextPlayerColor = PlayerColors.YELLOW
+            for (tokenNo in 0..3) {
+                ludoMap.players[playerNo].dice.state = state
+                ludoMap.players[playerNo].tokens[tokenNo].tokenImage.apply {
+                    if (state == DiceState.WAITING) {
+                        if (ludoMap.players[playerNo].dice.outCome == 6) {
+                            this.isClickable = true
+                        } else {
+                            if (ludoMap.players[playerNo].tokens[tokenNo].isFree) {
+                                this.isClickable = true
+                            } else {
+                                this.isClickable = false
+                                lifecycleScope.launch {
+                                    delay(700)
+                                    viewModel.activeColor.postValue(nextPlayerColor)
+                                }
+                            }
+                        }
+                    } else isClickable = false
+                }
+            }
+
+
             when (state) {
                 DiceState.READY -> {
-                    ludoMap.players[3].dice.diceView.isVisible = true
-                    ludoMap.players[3].dice.diceView.isClickable = true
+                    ludoMap.players[playerNo].dice.diceView.isVisible = true
+                    ludoMap.players[playerNo].dice.diceView.isClickable = true
 
                 }
                 DiceState.WAITING -> {
-                    ludoMap.players[3].dice.diceView.isVisible = true
-                    ludoMap.players[3].dice.diceView.isClickable = false
+                    ludoMap.players[playerNo].dice.diceView.isVisible = true
+                    ludoMap.players[playerNo].dice.diceView.isClickable = false
 
                 }
                 DiceState.SPINNING -> {
-                    ludoMap.players[3].dice.diceView.isVisible = true
-                    ludoMap.players[3].dice.diceView.isClickable = false
+                    ludoMap.players[playerNo].dice.diceView.isVisible = true
+                    ludoMap.players[playerNo].dice.diceView.isClickable = false
                 }
                 DiceState.IDLE -> {
-                    ludoMap.players[3].dice.diceView.isVisible = true
-                    ludoMap.players[3].dice.diceView.isClickable = false
+                    ludoMap.players[playerNo].dice.diceView.isVisible = true
+                    ludoMap.players[playerNo].dice.diceView.isClickable = false
                 }
                 DiceState.REST -> {
-                    ludoMap.players[3].dice.diceView.isVisible = false
-                    ludoMap.players[3].dice.diceView.isClickable = false
+                    ludoMap.players[playerNo].dice.diceView.isVisible = false
+                    ludoMap.players[playerNo].dice.diceView.isClickable = false
                 }
             }
+
 
         })
 
     }
 
 
-
     private fun performDiceClick() {
         when (activeColor) {
             PlayerColors.YELLOW -> {
+                val playerNo = 0
                 viewModel.yellowDiceState.postValue(DiceState.SPINNING)
 //                ludoMap.players[0].dice.diceView.setBackgroundResource(R.drawable.green_dice_animation)
 //                val diceAnimation =ludoMap.players[0].dice.diceView.background as AnimationDrawable
 
-                ludoMap.players[0].dice.diceView.animate()
+                ludoMap.players[playerNo].dice.diceView.animate()
                     .scaleX(1.5f)
                     .scaleY(1.5f)
                     .rotation(-45f)
                     .rotationY(1080f).withStartAction {
 //                        diceAnimation.start()
                     }.withEndAction {
-                        ludoMap.players[0].dice.diceView.scaleX = 1f
-                        ludoMap.players[0].dice.diceView.scaleY = 1f
-                        ludoMap.players[0].dice.diceView.rotation = 0f
-                        ludoMap.players[0].dice.diceView.rotationY = 0f
+                        ludoMap.players[playerNo].dice.diceView.scaleX = 1f
+                        ludoMap.players[playerNo].dice.diceView.scaleY = 1f
+                        ludoMap.players[playerNo].dice.diceView.rotation = 0f
+                        ludoMap.players[playerNo].dice.diceView.rotationY = 0f
 
 
                         val outcome = (1..6).random()
-                        ludoMap.players[0].dice.outCome = outcome
-                        ludoMap.players[0].dice.diceView.setImageResource(
+                        ludoMap.players[playerNo].dice.outCome = outcome
+                        ludoMap.players[playerNo].dice.diceView.setImageResource(
                             getRandomDiceFace(
                                 activeColor,
                                 outcome
@@ -423,110 +479,81 @@ class GameActivity : AppCompatActivity() {
                     }
             }
             PlayerColors.GREEN -> {
+                val playerNo = 1
                 viewModel.greenDiceState.postValue(DiceState.SPINNING)
-
-                ludoMap.players[1].dice.diceView.animate()
+                ludoMap.players[playerNo].dice.diceView.animate()
                     .scaleX(1.5f)
                     .scaleY(1.5f)
                     .rotation(-45f)
-                    .rotationY(1080f).withStartAction {
-
-                    }.withEndAction {
-                        ludoMap.players[1].dice.diceView.scaleX = 1f
-                        ludoMap.players[1].dice.diceView.scaleY = 1f
-                        ludoMap.players[1].dice.diceView.rotation = 0f
-                        ludoMap.players[1].dice.diceView.rotationY = 0f
+                    .rotationY(1080f).withEndAction {
+                        ludoMap.players[playerNo].dice.diceView.scaleX = 1f
+                        ludoMap.players[playerNo].dice.diceView.scaleY = 1f
+                        ludoMap.players[playerNo].dice.diceView.rotation = 0f
+                        ludoMap.players[playerNo].dice.diceView.rotationY = 0f
 
 
                         val outcome = (1..6).random()
-                        ludoMap.players[1].dice.outCome = outcome
-                        ludoMap.players[1].dice.diceView.setImageResource(
+                        ludoMap.players[playerNo].dice.outCome = outcome
+                        ludoMap.players[playerNo].dice.diceView.setImageResource(
                             getRandomDiceFace(
                                 activeColor,
                                 outcome
                             )
                         )
-
-                        lifecycleScope.launch {
-                            delay(700)
-                            viewModel.greenDiceState.postValue(DiceState.REST)
-                            if (outcome == 6) {
-                                viewModel.activeColor.postValue(PlayerColors.GREEN)
-                            } else {
-                                viewModel.activeColor.postValue(PlayerColors.RED)
-                            }
-                        }
+                        viewModel.greenDiceState.postValue(DiceState.WAITING)
 
                     }
             }
             PlayerColors.RED -> {
+                val playerNo = 2
                 viewModel.redDiceState.postValue(DiceState.SPINNING)
-                ludoMap.players[2].dice.diceView.animate()
+                ludoMap.players[playerNo].dice.diceView.animate()
                     .scaleX(1.5f)
                     .scaleY(1.5f)
                     .rotation(-45f)
-                    .rotationY(1080f).withStartAction {
-                    }.withEndAction {
-                        ludoMap.players[2].dice.diceView.scaleX = 1f
-                        ludoMap.players[2].dice.diceView.scaleY = 1f
-                        ludoMap.players[2].dice.diceView.rotation = 0f
-                        ludoMap.players[2].dice.diceView.rotationY = 0f
+                    .rotationY(1080f).withEndAction {
+                        ludoMap.players[playerNo].dice.diceView.scaleX = 1f
+                        ludoMap.players[playerNo].dice.diceView.scaleY = 1f
+                        ludoMap.players[playerNo].dice.diceView.rotation = 0f
+                        ludoMap.players[playerNo].dice.diceView.rotationY = 0f
 
 
                         val outcome = (1..6).random()
-                        ludoMap.players[2].dice.outCome = outcome
-                        ludoMap.players[2].dice.diceView.setImageResource(
+                        ludoMap.players[playerNo].dice.outCome = outcome
+                        ludoMap.players[playerNo].dice.diceView.setImageResource(
                             getRandomDiceFace(
                                 activeColor,
                                 outcome
                             )
                         )
-
-                        lifecycleScope.launch {
-                            delay(700)
-                            viewModel.redDiceState.postValue(DiceState.REST)
-                            if (outcome == 6) {
-                                viewModel.activeColor.postValue(PlayerColors.RED)
-                            } else {
-                                viewModel.activeColor.postValue(PlayerColors.BLUE)
-                            }
-                        }
+                        viewModel.redDiceState.postValue(DiceState.WAITING)
 
                     }
             }
             PlayerColors.BLUE -> {
+                val playerNo = 3
                 viewModel.blueDiceState.postValue(DiceState.SPINNING)
-                ludoMap.players[3].dice.diceView.animate()
+                ludoMap.players[playerNo].dice.diceView.animate()
                     .scaleX(1.5f)
                     .scaleY(1.5f)
                     .rotation(-45f)
-                    .rotationY(1080f).withStartAction {
-                    }.withEndAction {
-                        ludoMap.players[3].dice.diceView.scaleX = 1f
-                        ludoMap.players[3].dice.diceView.scaleY = 1f
-                        ludoMap.players[3].dice.diceView.rotation = 0f
-                        ludoMap.players[3].dice.diceView.rotationY = 0f
+                    .rotationY(1080f).withEndAction {
+                        ludoMap.players[playerNo].dice.diceView.scaleX = 1f
+                        ludoMap.players[playerNo].dice.diceView.scaleY = 1f
+                        ludoMap.players[playerNo].dice.diceView.rotation = 0f
+                        ludoMap.players[playerNo].dice.diceView.rotationY = 0f
 
 
                         val outcome = (1..6).random()
-                        ludoMap.players[3].dice.outCome = outcome
-                        ludoMap.players[3].dice.diceView.setImageResource(
+                        ludoMap.players[playerNo].dice.outCome = outcome
+                        ludoMap.players[playerNo].dice.diceView.setImageResource(
                             getRandomDiceFace(
                                 activeColor,
                                 outcome
                             )
                         )
+                        viewModel.blueDiceState.postValue(DiceState.WAITING)
 
-
-                        lifecycleScope.launch {
-                            delay(700)
-                            viewModel.blueDiceState.postValue(DiceState.REST)
-                            if (outcome == 6) {
-                                viewModel.activeColor.postValue(PlayerColors.BLUE)
-                            } else {
-                                viewModel.activeColor.postValue(PlayerColors.YELLOW)
-                            }
-                        }
                     }
             }
         }
@@ -540,8 +567,8 @@ class GameActivity : AppCompatActivity() {
         view.layoutParams.width = (3 * d / 4).toInt()
 
         val layoutParams = view.layoutParams as ConstraintLayout.LayoutParams
-        layoutParams.marginStart = (column[x-1]+d/10).toInt()
-        layoutParams.topMargin = (row[y-1]+d/10).toInt()
+        layoutParams.marginStart = (column[x - 1] + d / 10).toInt()
+        layoutParams.topMargin = (row[y - 1] + d / 10).toInt()
         view.layoutParams = layoutParams
     }
 
