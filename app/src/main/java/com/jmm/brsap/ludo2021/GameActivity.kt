@@ -154,9 +154,10 @@ class GameActivity : AppCompatActivity() {
         tokenNo: Int
     ) {
         if (ludoMap.players[playerNo].tokens[tokenNo].isFree) {
-            val point =
-                ludoMap.players[playerNo].tokens[tokenNo].standingAt + ludoMap.players[playerNo].dice.outCome
+            val point = ludoMap.players[playerNo].tokens[tokenNo].standingAt + ludoMap.players[playerNo].dice.outCome
+
             placeTokenOnPath(view, ludoMap.tiles[point].column, ludoMap.tiles[point].row)
+
             ludoMap.players[playerNo].tokens[tokenNo].standingAt = point
 
             if (ludoMap.players[playerNo].dice.outCome == 6) viewModel.activeColor.postValue(
