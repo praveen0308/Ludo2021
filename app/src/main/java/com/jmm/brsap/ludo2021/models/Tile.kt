@@ -7,5 +7,5 @@ data class Tile(
     val isStop: Boolean = false,
     val color: PlayerColors = PlayerColors.WHITE,
     val gateFor: PlayerColors = PlayerColors.WHITE,
-    var tokens : List<Token> = emptyList(),
+    var tokens : MutableList<Token> = mutableListOf(),
 )

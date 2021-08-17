@@ -5,7 +5,7 @@ data class LudoMap(
     val type : PlayersCount,
     val players:List<Player>,
     val restingPlaces: List<RestingPlace>,
-    val tiles : List<Tile>,
+    val tiles : MutableList<Tile>,
     val homePaths:List<MutableList<Tile>>,
     val diceSpots:List<DiceSpot>,
 

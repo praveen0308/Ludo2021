@@ -154,28 +154,42 @@ class GameActivity : AppCompatActivity() {
         tokenNo: Int
     ) {
         if (ludoMap.players[playerNo].tokens[tokenNo].isFree) {
+            ludoMap.players[playerNo].tokens[tokenNo].stepsCompleted += ludoMap.players[playerNo].dice.outCome
+
             val point = ludoMap.players[playerNo].tokens[tokenNo].standingAt + ludoMap.players[playerNo].dice.outCome
+            removeTokenFromTile(ludoMap.players[playerNo].tokens[tokenNo].standingAt,playerNo,tokenNo)
+            if (point>51){
+                val newPoint = point - 52
+                enterTokenInTile(newPoint,playerNo,tokenNo)
+                placeTokenOnPath(view, ludoMap.tiles[newPoint].column, ludoMap.tiles[newPoint].row)
+                ludoMap.players[playerNo].tokens[tokenNo].standingAt = newPoint
+            }
+            else{
+                enterTokenInTile(point,playerNo,tokenNo)
+                placeTokenOnPath(view, ludoMap.tiles[point].column, ludoMap.tiles[point].row)
+                ludoMap.players[playerNo].tokens[tokenNo].standingAt = point
+            }
 
-            placeTokenOnPath(view, ludoMap.tiles[point].column, ludoMap.tiles[point].row)
-
-            ludoMap.players[playerNo].tokens[tokenNo].standingAt = point
-
-            if (ludoMap.players[playerNo].dice.outCome == 6) viewModel.activeColor.postValue(
-                playerColor
-            )
+            if (ludoMap.players[playerNo].dice.outCome == 6) viewModel.activeColor.postValue(playerColor)
             else viewModel.activeColor.postValue(nextPlayerColor)
         } else {
             val startingPoint = ludoMap.players[playerNo].tokens[tokenNo].startingFrom
-            placeTokenOnPath(
-                view,
-                ludoMap.tiles[startingPoint].column,
-                ludoMap.tiles[startingPoint].row
-            )
+            placeTokenOnPath(view,ludoMap.tiles[startingPoint].column,ludoMap.tiles[startingPoint].row)
             ludoMap.players[playerNo].tokens[tokenNo].isFree = true
             ludoMap.players[playerNo].tokens[tokenNo].standingAt = startingPoint
             viewModel.activeColor.postValue(playerColor)
         }
 
+    }
+    private fun removeTokenFromTile(tileNo:Int,playerNo:Int,tokenNo: Int) {
+        for ((index,token) in ludoMap.tiles[tileNo].tokens.withIndex()){
+            if (token.playerNo == playerNo && token.tokenNo == tokenNo){
+                ludoMap.tiles[tileNo].tokens.removeAt(index)
+            }
+        }
+    }
+    private fun enterTokenInTile(tileNo:Int,playerNo:Int,tokenNo: Int) {
+        ludoMap.tiles[tileNo].tokens.add(ludoMap.players[playerNo].tokens[tokenNo])
     }
 
     private fun subscribeObservers() {
@@ -545,10 +559,10 @@ class GameActivity : AppCompatActivity() {
 
         val players = mutableListOf<Player>()
         val yellowTokens = mutableListOf<Token>()
-        yellowTokens.add(Token(1, PlayerColors.YELLOW, 0, binding.ivYellow1))
-        yellowTokens.add(Token(2, PlayerColors.YELLOW, 0, binding.ivYellow2))
-        yellowTokens.add(Token(3, PlayerColors.YELLOW, 0, binding.ivYellow3))
-        yellowTokens.add(Token(4, PlayerColors.YELLOW, 0, binding.ivYellow4))
+        yellowTokens.add(Token(1, PlayerColors.YELLOW,0, 0, binding.ivYellow1))
+        yellowTokens.add(Token(2, PlayerColors.YELLOW,0, 0, binding.ivYellow2))
+        yellowTokens.add(Token(3, PlayerColors.YELLOW,0, 0, binding.ivYellow3))
+        yellowTokens.add(Token(4, PlayerColors.YELLOW,0, 0, binding.ivYellow4))
         val yellowDice = Dice(PlayerColors.YELLOW, DiceState.READY, binding.ivDice1)
         players.add(
             Player(
@@ -563,10 +577,10 @@ class GameActivity : AppCompatActivity() {
 
 
         val greenTokens = mutableListOf<Token>()
-        greenTokens.add(Token(1, PlayerColors.GREEN, 13, binding.ivGreen1))
-        greenTokens.add(Token(2, PlayerColors.GREEN, 13, binding.ivGreen2))
-        greenTokens.add(Token(3, PlayerColors.GREEN, 13, binding.ivGreen3))
-        greenTokens.add(Token(4, PlayerColors.GREEN, 13, binding.ivGreen4))
+        greenTokens.add(Token(1, PlayerColors.GREEN,1, 13, binding.ivGreen1))
+        greenTokens.add(Token(2, PlayerColors.GREEN,1, 13, binding.ivGreen2))
+        greenTokens.add(Token(3, PlayerColors.GREEN,1, 13, binding.ivGreen3))
+        greenTokens.add(Token(4, PlayerColors.GREEN,1, 13, binding.ivGreen4))
         val greenDice = Dice(PlayerColors.GREEN, DiceState.READY, binding.ivDice2)
         players.add(
             Player(
@@ -581,10 +595,10 @@ class GameActivity : AppCompatActivity() {
 
 
         val redTokens = mutableListOf<Token>()
-        redTokens.add(Token(1, PlayerColors.RED, 26, binding.ivRed1))
-        redTokens.add(Token(2, PlayerColors.RED, 26, binding.ivRed2))
-        redTokens.add(Token(3, PlayerColors.RED, 26, binding.ivRed3))
-        redTokens.add(Token(4, PlayerColors.RED, 26, binding.ivRed4))
+        redTokens.add(Token(1, PlayerColors.RED,2, 26, binding.ivRed1))
+        redTokens.add(Token(2, PlayerColors.RED,2, 26, binding.ivRed2))
+        redTokens.add(Token(3, PlayerColors.RED,2, 26, binding.ivRed3))
+        redTokens.add(Token(4, PlayerColors.RED,2, 26, binding.ivRed4))
         val redDice = Dice(PlayerColors.RED, DiceState.READY, binding.ivDice3)
         players.add(
             Player(
@@ -599,10 +613,10 @@ class GameActivity : AppCompatActivity() {
 
 
         val blueTokens = mutableListOf<Token>()
-        blueTokens.add(Token(1, PlayerColors.BLUE, 39, binding.ivBlue1))
-        blueTokens.add(Token(2, PlayerColors.BLUE, 39, binding.ivBlue2))
-        blueTokens.add(Token(3, PlayerColors.BLUE, 39, binding.ivBlue3))
-        blueTokens.add(Token(4, PlayerColors.BLUE, 39, binding.ivBlue4))
+        blueTokens.add(Token(1, PlayerColors.BLUE,3, 39, binding.ivBlue1))
+        blueTokens.add(Token(2, PlayerColors.BLUE,3, 39, binding.ivBlue2))
+        blueTokens.add(Token(3, PlayerColors.BLUE,3, 39, binding.ivBlue3))
+        blueTokens.add(Token(4, PlayerColors.BLUE,3, 39, binding.ivBlue4))
 
         val blueDice = Dice(PlayerColors.BLUE, DiceState.READY, binding.ivDice4)
 

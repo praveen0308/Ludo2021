@@ -5,6 +5,7 @@ import android.widget.ImageView
 data class Token(
     val tokenNo:Int,
     var color: PlayerColors,
+    var playerNo:Int,
     var startingFrom:Int,
     var tokenImage:ImageView,
     var standingAt : Int=-1,

@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".GameActivity">
+    tools:context=".GameActivity"
+    android:animateLayoutChanges="true">
 
 
     <ImageView
@@ -59,7 +60,8 @@
         android:translationZ="10dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_green_token_01" />
+        app:srcCompat="@drawable/ic_green_token_01"
+        />
     <ImageView
         android:id="@+id/iv_green_2"
         android:layout_width="wrap_content"
