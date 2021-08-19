@@ -156,32 +156,52 @@ class GameActivity : AppCompatActivity() {
         if (ludoMap.players[playerNo].tokens[tokenNo].isFree) {
             lifecycleScope.launch {
                 for (i in 1..ludoMap.players[playerNo].dice.outCome) {
-                    ludoMap.players[playerNo].tokens[tokenNo].stepsCompleted += 1
+                    removeTokenFromTile(
+                        ludoMap.players[playerNo].tokens[tokenNo].standingAt,
+                        playerNo,
+                        tokenNo
+                    )
+
 
                     val point = ludoMap.players[playerNo].tokens[tokenNo].standingAt + 1
-                    removeTokenFromTile(ludoMap.players[playerNo].tokens[tokenNo].standingAt, playerNo, tokenNo)
+
                     if (point > 51) {
                         val newPoint = point - 52
                         enterTokenInTile(newPoint, playerNo, tokenNo)
-                        placeTokenOnPath(view, ludoMap.tiles[newPoint].column, ludoMap.tiles[newPoint].row)
+                        placeTokenOnPath(
+                            view,
+                            ludoMap.tiles[newPoint].column,
+                            ludoMap.tiles[newPoint].row
+                        )
                         ludoMap.players[playerNo].tokens[tokenNo].standingAt = newPoint
 
                     } else {
                         enterTokenInTile(point, playerNo, tokenNo)
-                        placeTokenOnPath(view, ludoMap.tiles[point].column, ludoMap.tiles[point].row)
+                        placeTokenOnPath(
+                            view,
+                            ludoMap.tiles[point].column,
+                            ludoMap.tiles[point].row
+                        )
                         ludoMap.players[playerNo].tokens[tokenNo].standingAt = point
                     }
+                    ludoMap.players[playerNo].tokens[tokenNo].stepsCompleted += 1
                     delay(300)
                 }
 
-                if (ludoMap.players[playerNo].dice.outCome == 6) viewModel.activeColor.postValue(playerColor)
+                if (ludoMap.players[playerNo].dice.outCome == 6) viewModel.activeColor.postValue(
+                    playerColor
+                )
                 else viewModel.activeColor.postValue(nextPlayerColor)
             }
 
 
         } else {
             val startingPoint = ludoMap.players[playerNo].tokens[tokenNo].startingFrom
-            placeTokenOnPath(view,ludoMap.tiles[startingPoint].column, ludoMap.tiles[startingPoint].row)
+            placeTokenOnPath(
+                view,
+                ludoMap.tiles[startingPoint].column,
+                ludoMap.tiles[startingPoint].row
+            )
             ludoMap.players[playerNo].tokens[tokenNo].isFree = true
             ludoMap.players[playerNo].tokens[tokenNo].standingAt = startingPoint
             viewModel.activeColor.postValue(playerColor)
@@ -198,7 +218,31 @@ class GameActivity : AppCompatActivity() {
     }
 
     private fun enterTokenInTile(tileNo: Int, playerNo: Int, tokenNo: Int) {
-        ludoMap.tiles[tileNo].tokens.add(ludoMap.players[playerNo].tokens[tokenNo])
+        if (ludoMap.tiles[tileNo].tokens.isEmpty() || ludoMap.tiles[tileNo].isStop) {
+            ludoMap.tiles[tileNo].tokens.add(ludoMap.players[playerNo].tokens[tokenNo])
+        } else {
+
+            for (token in ludoMap.tiles[tileNo].tokens) {
+                if (token.color != ludoMap.players[playerNo].color) {
+                    removeTokenFromTile(tileNo, token.playerNo, token.tokenNo)
+                    resetToken(token.playerNo,token.tokenNo)
+
+                }
+            }
+            ludoMap.tiles[tileNo].tokens.add(ludoMap.players[playerNo].tokens[tokenNo])
+        }
+    }
+
+    private fun resetToken(playerNo: Int, tokenNo: Int) {
+        ludoMap.players[playerNo].tokens[tokenNo].stepsCompleted = 0
+        ludoMap.players[playerNo].tokens[tokenNo].standingAt = -1
+        ludoMap.players[playerNo].tokens[tokenNo].isFree = false
+        ludoMap.players[playerNo].tokens[tokenNo].canMove = false
+        placeTokenOnSpot(
+            ludoMap.players[playerNo].tokens[tokenNo].tokenImage,
+            ludoMap.restingPlaces[playerNo].spots[tokenNo].pX,
+            ludoMap.restingPlaces[playerNo].spots[tokenNo].pY
+        )
     }
 
     private fun subscribeObservers() {
