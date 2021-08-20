@@ -8,8 +8,10 @@
         <entry key="..\:/Users/brsap/AndroidStudioProjects/Ludo21/app/src/main/res/drawable/ic_blue_token_01.xml" value="0.17777777777777778" />
         <entry key="..\:/Users/brsap/AndroidStudioProjects/Ludo21/app/src/main/res/drawable/ic_blue_token_for_ludo_01.xml" value="0.17777777777777778" />
         <entry key="..\:/Users/brsap/AndroidStudioProjects/Ludo21/app/src/main/res/drawable/ic_ludo_center.xml" value="0.17777777777777778" />
-        <entry key="..\:/Users/brsap/AndroidStudioProjects/Ludo21/app/src/main/res/layout/activity_game.xml" value="0.1" />
+        <entry key="..\:/Users/brsap/AndroidStudioProjects/Ludo21/app/src/main/res/layout/activity_game.xml" value="0.22" />
         <entry key="..\:/Users/brsap/AndroidStudioProjects/Ludo21/app/src/main/res/layout/activity_main.xml" value="0.1" />
+        <entry key="..\:/Users/brsap/AndroidStudioProjects/Ludo21/app/src/main/res/layout/layout_token_view.xml" value="0.2777777777777778" />
+        <entry key="..\:/Users/brsap/AndroidStudioProjects/Ludo21/app/src/main/res/xml/attrs.xml" value="0.2777777777777778" />
       </map>
     </option>
   </component>

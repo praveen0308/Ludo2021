@@ -315,16 +315,21 @@ class GameActivity : AppCompatActivity() {
                 if (state == DiceState.WAITING) {
                     if (ludoMap.players[playerNo].dice.outCome == 6) {
                         this.isClickable = true
+                        this.isMovable(true)
                     } else {
-
                         if (ludoMap.players[playerNo].tokens[tokenNo].isFree) {
                             this.isClickable = true
+                            this.isMovable(true)
                         } else {
                             this.isClickable = false
+                            this.isMovable(false)
 
                         }
                     }
-                } else isClickable = false
+                } else {
+                    isClickable = false
+                    this.isMovable(false)
+                }
             }
         }
         if (state == DiceState.WAITING) {
