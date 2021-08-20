@@ -822,7 +822,6 @@ class GameActivity : AppCompatActivity() {
         view.layoutParams = layoutParams
     }
 
-
     private fun prepareDimensions() {
         val resourceId = resources.getIdentifier("status_bar_height", "dimen", "android")
         mHeight =
