@@ -16,6 +16,7 @@ import com.jmm.brsap.ludo2021.databinding.ActivityGameBinding
 import com.jmm.brsap.ludo2021.models.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.lang.StringBuilder
 
 class GameActivity : AppCompatActivity() {
 
@@ -155,19 +156,33 @@ class GameActivity : AppCompatActivity() {
     ) {
         if (ludoMap.players[playerNo].tokens[tokenNo].isFree) {
             lifecycleScope.launch {
+                var eliminatedSomeone = false
                 for (i in 1..ludoMap.players[playerNo].dice.outCome) {
+                    val isLastStep = i==ludoMap.players[playerNo].dice.outCome
                     removeTokenFromTile(
                         ludoMap.players[playerNo].tokens[tokenNo].standingAt,
                         playerNo,
                         tokenNo
                     )
+/*
+                    val tileNo =ludoMap.players[playerNo].tokens[tokenNo].standingAt
+                    val myTokens = StringBuilder()
+                    for ((index, token) in ludoMap.tiles[tileNo].tokens.withIndex()) {
+                        myTokens.append("Player ${token.playerNo} -> Token ${token.tokenNo} \n")
+                        if (token.playerNo == playerNo && token.tokenNo == tokenNo) {
+                            ludoMap.tiles[tileNo].tokens.removeAt(index)
+                            Log.d(TAG,"Token no. ${token.tokenNo} of Player ${token.playerNo} is removed from tile no $tileNo.")
+                        }
+                    }
+                    Log.d(TAG,"Tile No. $tileNo contains : $myTokens")
+*/
 
 
                     val point = ludoMap.players[playerNo].tokens[tokenNo].standingAt + 1
 
                     if (point > 51) {
                         val newPoint = point - 52
-                        enterTokenInTile(newPoint, playerNo, tokenNo)
+                        eliminatedSomeone = enterTokenInTile(newPoint, playerNo, tokenNo,isLastStep)
                         placeTokenOnPath(
                             view,
                             ludoMap.tiles[newPoint].column,
@@ -176,7 +191,7 @@ class GameActivity : AppCompatActivity() {
                         ludoMap.players[playerNo].tokens[tokenNo].standingAt = newPoint
 
                     } else {
-                        enterTokenInTile(point, playerNo, tokenNo)
+                        eliminatedSomeone = enterTokenInTile(point, playerNo, tokenNo,isLastStep)
                         placeTokenOnPath(
                             view,
                             ludoMap.tiles[point].column,
@@ -188,10 +203,13 @@ class GameActivity : AppCompatActivity() {
                     delay(300)
                 }
 
-                if (ludoMap.players[playerNo].dice.outCome == 6) viewModel.activeColor.postValue(
-                    playerColor
-                )
-                else viewModel.activeColor.postValue(nextPlayerColor)
+                if (eliminatedSomeone){
+                    viewModel.activeColor.postValue(playerColor)
+                }else{
+                    if (ludoMap.players[playerNo].dice.outCome == 6) viewModel.activeColor.postValue(playerColor)
+                    else viewModel.activeColor.postValue(nextPlayerColor)
+                }
+
             }
 
 
@@ -204,6 +222,8 @@ class GameActivity : AppCompatActivity() {
             )
             ludoMap.players[playerNo].tokens[tokenNo].isFree = true
             ludoMap.players[playerNo].tokens[tokenNo].standingAt = startingPoint
+
+            enterTokenInTile(startingPoint, playerNo, tokenNo,false)
             viewModel.activeColor.postValue(playerColor)
         }
 
@@ -213,24 +233,36 @@ class GameActivity : AppCompatActivity() {
         for ((index, token) in ludoMap.tiles[tileNo].tokens.withIndex()) {
             if (token.playerNo == playerNo && token.tokenNo == tokenNo) {
                 ludoMap.tiles[tileNo].tokens.removeAt(index)
+                Log.d(TAG,"Token no. ${token.tokenNo} of Player ${token.playerNo} is removed from tile no $tileNo.")
             }
         }
     }
 
-    private fun enterTokenInTile(tileNo: Int, playerNo: Int, tokenNo: Int) {
-        if (ludoMap.tiles[tileNo].tokens.isEmpty() || ludoMap.tiles[tileNo].isStop) {
-            ludoMap.tiles[tileNo].tokens.add(ludoMap.players[playerNo].tokens[tokenNo])
-        } else {
+    private fun enterTokenInTile(tileNo: Int, playerNo: Int, tokenNo: Int,isLastStep:Boolean):Boolean {
+        var eliminatedSomeone = false
+        if (isLastStep){
+            if (ludoMap.tiles[tileNo].tokens.isEmpty() || ludoMap.tiles[tileNo].isStop) {
+                ludoMap.tiles[tileNo].tokens.add(ludoMap.players[playerNo].tokens[tokenNo])
+                Log.d(TAG,"Token no. $tokenNo of Player $playerNo is added into tile no $tileNo.")
+            } else {
 
-            for (token in ludoMap.tiles[tileNo].tokens) {
-                if (token.color != ludoMap.players[playerNo].color) {
-                    removeTokenFromTile(tileNo, token.playerNo, token.tokenNo)
-                    resetToken(token.playerNo,token.tokenNo)
-
+                for (token in ludoMap.tiles[tileNo].tokens) {
+                    if (token.color != ludoMap.players[playerNo].color) {
+                        removeTokenFromTile(tileNo, token.playerNo, token.tokenNo)
+                        resetToken(token.playerNo,token.tokenNo)
+                        eliminatedSomeone = true
+                        Log.d(TAG,"Token $tokenNo of Player $playerNo eliminated token ${token.tokenNo} of Player ${token.playerNo}")
+                    }
                 }
+                ludoMap.tiles[tileNo].tokens.add(ludoMap.players[playerNo].tokens[tokenNo])
+                Log.d(TAG,"Token no. $tokenNo of Player $playerNo is added into tile no $tileNo.")
             }
+        }else{
             ludoMap.tiles[tileNo].tokens.add(ludoMap.players[playerNo].tokens[tokenNo])
+            Log.d(TAG,"Token no. $tokenNo of Player $playerNo is added into tile no $tileNo.")
         }
+
+        return eliminatedSomeone
     }
 
     private fun resetToken(playerNo: Int, tokenNo: Int) {
@@ -617,10 +649,10 @@ class GameActivity : AppCompatActivity() {
 
         val players = mutableListOf<Player>()
         val yellowTokens = mutableListOf<Token>()
-        yellowTokens.add(Token(1, PlayerColors.YELLOW, 0, 0, binding.ivYellow1))
-        yellowTokens.add(Token(2, PlayerColors.YELLOW, 0, 0, binding.ivYellow2))
-        yellowTokens.add(Token(3, PlayerColors.YELLOW, 0, 0, binding.ivYellow3))
-        yellowTokens.add(Token(4, PlayerColors.YELLOW, 0, 0, binding.ivYellow4))
+        yellowTokens.add(Token(0, PlayerColors.YELLOW, 0, 0, binding.ivYellow1))
+        yellowTokens.add(Token(1, PlayerColors.YELLOW, 0, 0, binding.ivYellow2))
+        yellowTokens.add(Token(2, PlayerColors.YELLOW, 0, 0, binding.ivYellow3))
+        yellowTokens.add(Token(3, PlayerColors.YELLOW, 0, 0, binding.ivYellow4))
         val yellowDice = Dice(PlayerColors.YELLOW, DiceState.READY, binding.ivDice1)
         players.add(
             Player(
@@ -635,10 +667,10 @@ class GameActivity : AppCompatActivity() {
 
 
         val greenTokens = mutableListOf<Token>()
-        greenTokens.add(Token(1, PlayerColors.GREEN, 1, 13, binding.ivGreen1))
-        greenTokens.add(Token(2, PlayerColors.GREEN, 1, 13, binding.ivGreen2))
-        greenTokens.add(Token(3, PlayerColors.GREEN, 1, 13, binding.ivGreen3))
-        greenTokens.add(Token(4, PlayerColors.GREEN, 1, 13, binding.ivGreen4))
+        greenTokens.add(Token(0, PlayerColors.GREEN, 1, 13, binding.ivGreen1))
+        greenTokens.add(Token(1, PlayerColors.GREEN, 1, 13, binding.ivGreen2))
+        greenTokens.add(Token(2, PlayerColors.GREEN, 1, 13, binding.ivGreen3))
+        greenTokens.add(Token(3, PlayerColors.GREEN, 1, 13, binding.ivGreen4))
         val greenDice = Dice(PlayerColors.GREEN, DiceState.READY, binding.ivDice2)
         players.add(
             Player(
@@ -653,10 +685,10 @@ class GameActivity : AppCompatActivity() {
 
 
         val redTokens = mutableListOf<Token>()
-        redTokens.add(Token(1, PlayerColors.RED, 2, 26, binding.ivRed1))
-        redTokens.add(Token(2, PlayerColors.RED, 2, 26, binding.ivRed2))
-        redTokens.add(Token(3, PlayerColors.RED, 2, 26, binding.ivRed3))
-        redTokens.add(Token(4, PlayerColors.RED, 2, 26, binding.ivRed4))
+        redTokens.add(Token(0, PlayerColors.RED, 2, 26, binding.ivRed1))
+        redTokens.add(Token(1, PlayerColors.RED, 2, 26, binding.ivRed2))
+        redTokens.add(Token(2, PlayerColors.RED, 2, 26, binding.ivRed3))
+        redTokens.add(Token(3, PlayerColors.RED, 2, 26, binding.ivRed4))
         val redDice = Dice(PlayerColors.RED, DiceState.READY, binding.ivDice3)
         players.add(
             Player(
@@ -671,10 +703,10 @@ class GameActivity : AppCompatActivity() {
 
 
         val blueTokens = mutableListOf<Token>()
-        blueTokens.add(Token(1, PlayerColors.BLUE, 3, 39, binding.ivBlue1))
-        blueTokens.add(Token(2, PlayerColors.BLUE, 3, 39, binding.ivBlue2))
-        blueTokens.add(Token(3, PlayerColors.BLUE, 3, 39, binding.ivBlue3))
-        blueTokens.add(Token(4, PlayerColors.BLUE, 3, 39, binding.ivBlue4))
+        blueTokens.add(Token(0, PlayerColors.BLUE, 3, 39, binding.ivBlue1))
+        blueTokens.add(Token(1, PlayerColors.BLUE, 3, 39, binding.ivBlue2))
+        blueTokens.add(Token(2, PlayerColors.BLUE, 3, 39, binding.ivBlue3))
+        blueTokens.add(Token(3, PlayerColors.BLUE, 3, 39, binding.ivBlue4))
 
         val blueDice = Dice(PlayerColors.BLUE, DiceState.READY, binding.ivDice4)
 
