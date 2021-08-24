@@ -656,7 +656,7 @@ class GameActivity : AppCompatActivity() {
         val yellowDice = Dice(PlayerColors.YELLOW, DiceState.READY, binding.ivDice1)
         players.add(
             Player(
-                1,
+                0,
                 "Player 1",
                 PlayerColors.YELLOW,
                 PlayerNumbers.PLAYER_1,
@@ -674,7 +674,7 @@ class GameActivity : AppCompatActivity() {
         val greenDice = Dice(PlayerColors.GREEN, DiceState.READY, binding.ivDice2)
         players.add(
             Player(
-                2,
+                1,
                 "Player 2",
                 PlayerColors.GREEN,
                 PlayerNumbers.PLAYER_2,
@@ -692,7 +692,7 @@ class GameActivity : AppCompatActivity() {
         val redDice = Dice(PlayerColors.RED, DiceState.READY, binding.ivDice3)
         players.add(
             Player(
-                3,
+                2,
                 "Player 3",
                 PlayerColors.RED,
                 PlayerNumbers.PLAYER_3,
@@ -712,7 +712,7 @@ class GameActivity : AppCompatActivity() {
 
         players.add(
             Player(
-                4,
+                3,
                 "Player 4",
                 PlayerColors.BLUE,
                 PlayerNumbers.PLAYER_4,
