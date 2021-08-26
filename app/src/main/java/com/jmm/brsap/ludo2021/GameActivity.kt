@@ -158,31 +158,32 @@ class GameActivity : AppCompatActivity() {
             lifecycleScope.launch {
                 var eliminatedSomeone = false
                 for (i in 1..ludoMap.players[playerNo].dice.outCome) {
-                    val isLastStep = i==ludoMap.players[playerNo].dice.outCome
+
+                    if (ludoMap.players[playerNo].tokens[tokenNo].stepsCompleted >= 50) {
+
+                        placeTokenOnPath(
+                            view,
+                            ludoMap.homePaths[playerNo][i].column,
+                            ludoMap.homePaths[playerNo][i].row
+                        )
+                        ludoMap.players[playerNo].tokens[tokenNo].stepsCompleted += 1
+
+                    } else {
+
+                    }
+                    val isLastStep = i == ludoMap.players[playerNo].dice.outCome
                     removeTokenFromTile(
                         ludoMap.players[playerNo].tokens[tokenNo].standingAt,
                         playerNo,
                         tokenNo
                     )
-/*
-                    val tileNo =ludoMap.players[playerNo].tokens[tokenNo].standingAt
-                    val myTokens = StringBuilder()
-                    for ((index, token) in ludoMap.tiles[tileNo].tokens.withIndex()) {
-                        myTokens.append("Player ${token.playerNo} -> Token ${token.tokenNo} \n")
-                        if (token.playerNo == playerNo && token.tokenNo == tokenNo) {
-                            ludoMap.tiles[tileNo].tokens.removeAt(index)
-                            Log.d(TAG,"Token no. ${token.tokenNo} of Player ${token.playerNo} is removed from tile no $tileNo.")
-                        }
-                    }
-                    Log.d(TAG,"Tile No. $tileNo contains : $myTokens")
-*/
-
 
                     val point = ludoMap.players[playerNo].tokens[tokenNo].standingAt + 1
 
                     if (point > 51) {
                         val newPoint = point - 52
-                        eliminatedSomeone = enterTokenInTile(newPoint, playerNo, tokenNo,isLastStep)
+                        eliminatedSomeone =
+                            enterTokenInTile(newPoint, playerNo, tokenNo, isLastStep)
                         placeTokenOnPath(
                             view,
                             ludoMap.tiles[newPoint].column,
@@ -191,7 +192,7 @@ class GameActivity : AppCompatActivity() {
                         ludoMap.players[playerNo].tokens[tokenNo].standingAt = newPoint
 
                     } else {
-                        eliminatedSomeone = enterTokenInTile(point, playerNo, tokenNo,isLastStep)
+                        eliminatedSomeone = enterTokenInTile(point, playerNo, tokenNo, isLastStep)
                         placeTokenOnPath(
                             view,
                             ludoMap.tiles[point].column,
@@ -203,10 +204,12 @@ class GameActivity : AppCompatActivity() {
                     delay(300)
                 }
 
-                if (eliminatedSomeone){
+                if (eliminatedSomeone) {
                     viewModel.activeColor.postValue(playerColor)
-                }else{
-                    if (ludoMap.players[playerNo].dice.outCome == 6) viewModel.activeColor.postValue(playerColor)
+                } else {
+                    if (ludoMap.players[playerNo].dice.outCome == 6) viewModel.activeColor.postValue(
+                        playerColor
+                    )
                     else viewModel.activeColor.postValue(nextPlayerColor)
                 }
 
@@ -223,7 +226,7 @@ class GameActivity : AppCompatActivity() {
             ludoMap.players[playerNo].tokens[tokenNo].isFree = true
             ludoMap.players[playerNo].tokens[tokenNo].standingAt = startingPoint
 
-            enterTokenInTile(startingPoint, playerNo, tokenNo,false)
+            enterTokenInTile(startingPoint, playerNo, tokenNo, false)
             viewModel.activeColor.postValue(playerColor)
         }
 
@@ -233,33 +236,44 @@ class GameActivity : AppCompatActivity() {
         for ((index, token) in ludoMap.tiles[tileNo].tokens.withIndex()) {
             if (token.playerNo == playerNo && token.tokenNo == tokenNo) {
                 ludoMap.tiles[tileNo].tokens.removeAt(index)
-                Log.d(TAG,"Token no. ${token.tokenNo} of Player ${token.playerNo} is removed from tile no $tileNo.")
+                Log.d(
+                    TAG,
+                    "Token no. ${token.tokenNo} of Player ${token.playerNo} is removed from tile no $tileNo."
+                )
             }
         }
     }
 
-    private fun enterTokenInTile(tileNo: Int, playerNo: Int, tokenNo: Int,isLastStep:Boolean):Boolean {
+    private fun enterTokenInTile(
+        tileNo: Int,
+        playerNo: Int,
+        tokenNo: Int,
+        isLastStep: Boolean
+    ): Boolean {
         var eliminatedSomeone = false
-        if (isLastStep){
+        if (isLastStep) {
             if (ludoMap.tiles[tileNo].tokens.isEmpty() || ludoMap.tiles[tileNo].isStop) {
                 ludoMap.tiles[tileNo].tokens.add(ludoMap.players[playerNo].tokens[tokenNo])
-                Log.d(TAG,"Token no. $tokenNo of Player $playerNo is added into tile no $tileNo.")
+                Log.d(TAG, "Token no. $tokenNo of Player $playerNo is added into tile no $tileNo.")
             } else {
 
                 for (token in ludoMap.tiles[tileNo].tokens) {
                     if (token.color != ludoMap.players[playerNo].color) {
                         removeTokenFromTile(tileNo, token.playerNo, token.tokenNo)
-                        resetToken(token.playerNo,token.tokenNo)
+                        resetToken(token.playerNo, token.tokenNo)
                         eliminatedSomeone = true
-                        Log.d(TAG,"Token $tokenNo of Player $playerNo eliminated token ${token.tokenNo} of Player ${token.playerNo}")
+                        Log.d(
+                            TAG,
+                            "Token $tokenNo of Player $playerNo eliminated token ${token.tokenNo} of Player ${token.playerNo}"
+                        )
                     }
                 }
                 ludoMap.tiles[tileNo].tokens.add(ludoMap.players[playerNo].tokens[tokenNo])
-                Log.d(TAG,"Token no. $tokenNo of Player $playerNo is added into tile no $tileNo.")
+                Log.d(TAG, "Token no. $tokenNo of Player $playerNo is added into tile no $tileNo.")
             }
-        }else{
+        } else {
             ludoMap.tiles[tileNo].tokens.add(ludoMap.players[playerNo].tokens[tokenNo])
-            Log.d(TAG,"Token no. $tokenNo of Player $playerNo is added into tile no $tileNo.")
+            Log.d(TAG, "Token no. $tokenNo of Player $playerNo is added into tile no $tileNo.")
         }
 
         return eliminatedSomeone
