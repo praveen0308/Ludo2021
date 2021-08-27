@@ -168,8 +168,12 @@ class GameActivity : AppCompatActivity() {
                             ludoMap.homePaths[playerNo][point].row
                         )
                         ludoMap.players[playerNo].tokens[tokenNo].stepsCompleted += 1
+                        ludoMap.players[playerNo].tokens[tokenNo].stepsCompleted += 1
 
-                    } else {
+
+                    }
+                    // this way when
+                    else {
                         val isLastStep = i == ludoMap.players[playerNo].dice.outCome
                         removeTokenFromTile(
                             ludoMap.players[playerNo].tokens[tokenNo].standingAt,
