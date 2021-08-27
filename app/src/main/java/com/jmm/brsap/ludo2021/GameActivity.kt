@@ -168,8 +168,6 @@ class GameActivity : AppCompatActivity() {
                             ludoMap.homePaths[playerNo][point].row
                         )
                         ludoMap.players[playerNo].tokens[tokenNo].stepsCompleted += 1
-                        ludoMap.players[playerNo].tokens[tokenNo].stepsCompleted += 1
-
 
                     }
                     // this way when
