@@ -159,50 +159,52 @@ class GameActivity : AppCompatActivity() {
                 var eliminatedSomeone = false
                 for (i in 1..ludoMap.players[playerNo].dice.outCome) {
 
+                    // This token movement for home paths
                     if (ludoMap.players[playerNo].tokens[tokenNo].stepsCompleted >= 50) {
-
+                        val point = ludoMap.players[playerNo].tokens[tokenNo].stepsCompleted - 50
                         placeTokenOnPath(
                             view,
-                            ludoMap.homePaths[playerNo][i].column,
-                            ludoMap.homePaths[playerNo][i].row
+                            ludoMap.homePaths[playerNo][point].column,
+                            ludoMap.homePaths[playerNo][point].row
                         )
                         ludoMap.players[playerNo].tokens[tokenNo].stepsCompleted += 1
 
                     } else {
-
-                    }
-                    val isLastStep = i == ludoMap.players[playerNo].dice.outCome
-                    removeTokenFromTile(
-                        ludoMap.players[playerNo].tokens[tokenNo].standingAt,
-                        playerNo,
-                        tokenNo
-                    )
-
-                    val point = ludoMap.players[playerNo].tokens[tokenNo].standingAt + 1
-
-                    if (point > 51) {
-                        val newPoint = point - 52
-                        eliminatedSomeone =
-                            enterTokenInTile(newPoint, playerNo, tokenNo, isLastStep)
-                        placeTokenOnPath(
-                            view,
-                            ludoMap.tiles[newPoint].column,
-                            ludoMap.tiles[newPoint].row
+                        val isLastStep = i == ludoMap.players[playerNo].dice.outCome
+                        removeTokenFromTile(
+                            ludoMap.players[playerNo].tokens[tokenNo].standingAt,
+                            playerNo,
+                            tokenNo
                         )
-                        ludoMap.players[playerNo].tokens[tokenNo].standingAt = newPoint
 
-                    } else {
-                        eliminatedSomeone = enterTokenInTile(point, playerNo, tokenNo, isLastStep)
-                        placeTokenOnPath(
-                            view,
-                            ludoMap.tiles[point].column,
-                            ludoMap.tiles[point].row
-                        )
-                        ludoMap.players[playerNo].tokens[tokenNo].standingAt = point
+                        val point = ludoMap.players[playerNo].tokens[tokenNo].standingAt + 1
+
+                        if (point > 51) {
+                            val newPoint = point - 52
+                            eliminatedSomeone =
+                                enterTokenInTile(newPoint, playerNo, tokenNo, isLastStep)
+                            placeTokenOnPath(
+                                view,
+                                ludoMap.tiles[newPoint].column,
+                                ludoMap.tiles[newPoint].row
+                            )
+                            ludoMap.players[playerNo].tokens[tokenNo].standingAt = newPoint
+
+                        } else {
+                            eliminatedSomeone =
+                                enterTokenInTile(point, playerNo, tokenNo, isLastStep)
+                            placeTokenOnPath(
+                                view,
+                                ludoMap.tiles[point].column,
+                                ludoMap.tiles[point].row
+                            )
+                            ludoMap.players[playerNo].tokens[tokenNo].standingAt = point
+                        }
+                        ludoMap.players[playerNo].tokens[tokenNo].stepsCompleted += 1
+                        delay(300)
                     }
-                    ludoMap.players[playerNo].tokens[tokenNo].stepsCompleted += 1
-                    delay(300)
                 }
+
 
                 if (eliminatedSomeone) {
                     viewModel.activeColor.postValue(playerColor)
