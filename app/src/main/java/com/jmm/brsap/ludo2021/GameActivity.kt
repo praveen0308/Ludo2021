@@ -157,18 +157,24 @@ class GameActivity : AppCompatActivity() {
         if (ludoMap.players[playerNo].tokens[tokenNo].isFree) {
             lifecycleScope.launch {
                 var eliminatedSomeone = false
+                var stepsRemaining = ludoMap.players[playerNo].dice.outCome
                 for (i in 1..ludoMap.players[playerNo].dice.outCome) {
 
                     // This token movement for home paths
                     if (ludoMap.players[playerNo].tokens[tokenNo].stepsCompleted >= 50) {
-                        val point = ludoMap.players[playerNo].tokens[tokenNo].stepsCompleted - 50
-                        placeTokenOnPath(
-                            view,
-                            ludoMap.homePaths[playerNo][point].column,
-                            ludoMap.homePaths[playerNo][point].row
-                        )
-                        ludoMap.players[playerNo].tokens[tokenNo].stepsCompleted += 1
+                        for (j in 1..stepsRemaining) {
+                            val point =
+                                ludoMap.players[playerNo].tokens[tokenNo].stepsCompleted - 50
+                            placeTokenOnPath(
+                                view,
+                                ludoMap.homePaths[playerNo][point].column,
+                                ludoMap.homePaths[playerNo][point].row
+                            )
+                            ludoMap.players[playerNo].tokens[tokenNo].stepsCompleted += 1
+                            delay(300)
+                        }
 
+                        break
                     }
                     // this way when
                     else {
@@ -203,6 +209,7 @@ class GameActivity : AppCompatActivity() {
                             ludoMap.players[playerNo].tokens[tokenNo].standingAt = point
                         }
                         ludoMap.players[playerNo].tokens[tokenNo].stepsCompleted += 1
+                        stepsRemaining--
                         delay(300)
                     }
                 }
@@ -363,19 +370,32 @@ class GameActivity : AppCompatActivity() {
         for (tokenNo in 0..3) {
             ludoMap.players[playerNo].tokens[tokenNo].tokenImage.apply {
                 if (state == DiceState.WAITING) {
-                    if (ludoMap.players[playerNo].dice.outCome == 6) {
-                        this.isClickable = true
-                        this.isMovable(true)
+                    val outCome = ludoMap.players[playerNo].dice.outCome
+                    if ((ludoMap.players[playerNo].tokens[tokenNo].stepsCompleted + outCome) > 56) {
+
+                        lifecycleScope.launch {
+                            delay(700)
+                            viewModel.activeColor.postValue(nextPlayerColor)
+                        }
+
+
                     } else {
-                        if (ludoMap.players[playerNo].tokens[tokenNo].isFree) {
+                        if (outCome == 6) {
+
                             this.isClickable = true
                             this.isMovable(true)
                         } else {
-                            this.isClickable = false
-                            this.isMovable(false)
+                            if (ludoMap.players[playerNo].tokens[tokenNo].isFree) {
+                                this.isClickable = true
+                                this.isMovable(true)
+                            } else {
+                                this.isClickable = false
+                                this.isMovable(false)
 
+                            }
                         }
                     }
+
                 } else {
                     isClickable = false
                     this.isMovable(false)
@@ -890,7 +910,7 @@ class GameActivity : AppCompatActivity() {
         for (j in 0..15) row.add(topSpacing + d * j)
     }
 
-    // Map generation after this
+// Map generation after this
 
     private fun generateHomePaths() {
         val yPaths = mutableListOf<Tile>()
