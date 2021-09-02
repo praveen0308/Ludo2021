@@ -48,10 +48,18 @@ class GameActivity : AppCompatActivity() {
 
     private val TAG = "GameActivity"
 
+    private val MOVEMENT_SPEED = 220L
+    private val ELIMINATION_SPEED = 100L
+
+    private var playersCount = 2
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityGameBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        if (intent.hasExtra("PLAYERS")) playersCount = intent.getIntExtra("PLAYERS",2)
+
         prepareDimensions()
         prepareLudoMap()
 
@@ -62,7 +70,6 @@ class GameActivity : AppCompatActivity() {
         placeTokens()
         placeDice()
 
-//        viewModel.activePlayer.postValue(ludoMap.players[0])  // first active yellow player
 
         binding.apply {
 
@@ -147,6 +154,24 @@ class GameActivity : AppCompatActivity() {
 
     }
 
+    private fun winToken(playerNo: Int,tokenNo: Int){
+        when(playerNo){
+            0->{
+                when(tokenNo){
+                    0->{
+
+                    }
+                    1->{}
+                    2->{}
+                    3->{}
+                }
+            }
+            1->{}
+            2->{}
+            3->{}
+        }
+    }
+
     private fun moveToken(
         view: View,
         playerColor: PlayerColors,
@@ -171,7 +196,7 @@ class GameActivity : AppCompatActivity() {
                                 ludoMap.homePaths[playerNo][point].row
                             )
                             ludoMap.players[playerNo].tokens[tokenNo].stepsCompleted += 1
-                            delay(300)
+                            delay(MOVEMENT_SPEED)
                         }
 
                         break
@@ -210,7 +235,7 @@ class GameActivity : AppCompatActivity() {
                         }
                         ludoMap.players[playerNo].tokens[tokenNo].stepsCompleted += 1
                         stepsRemaining--
-                        delay(300)
+                        delay(MOVEMENT_SPEED)
                     }
                 }
 
@@ -270,6 +295,7 @@ class GameActivity : AppCompatActivity() {
 
                 for (token in ludoMap.tiles[tileNo].tokens) {
                     if (token.color != ludoMap.players[playerNo].color) {
+
                         removeTokenFromTile(tileNo, token.playerNo, token.tokenNo)
                         resetToken(token.playerNo, token.tokenNo)
                         eliminatedSomeone = true
@@ -291,15 +317,37 @@ class GameActivity : AppCompatActivity() {
     }
 
     private fun resetToken(playerNo: Int, tokenNo: Int) {
-        ludoMap.players[playerNo].tokens[tokenNo].stepsCompleted = 0
-        ludoMap.players[playerNo].tokens[tokenNo].standingAt = -1
-        ludoMap.players[playerNo].tokens[tokenNo].isFree = false
-        ludoMap.players[playerNo].tokens[tokenNo].canMove = false
-        placeTokenOnSpot(
-            ludoMap.players[playerNo].tokens[tokenNo].tokenImage,
-            ludoMap.restingPlaces[playerNo].spots[tokenNo].pX,
-            ludoMap.restingPlaces[playerNo].spots[tokenNo].pY
-        )
+
+        var stepsCompleted = ludoMap.players[playerNo].tokens[tokenNo].stepsCompleted
+
+        lifecycleScope.launch {
+            for (i in stepsCompleted.downTo(1)){
+                var point = ludoMap.players[playerNo].tokens[tokenNo].standingAt
+                if (point==0){
+                    ludoMap.players[playerNo].tokens[tokenNo].standingAt = 51
+                    point = ludoMap.players[playerNo].tokens[tokenNo].standingAt
+                }
+                else{
+                    point--
+                }
+                ludoMap.players[playerNo].tokens[tokenNo].standingAt = point
+                placeTokenOnPath(ludoMap.players[playerNo].tokens[tokenNo].tokenImage,ludoMap.tiles[point].column,
+                    ludoMap.tiles[point].row)
+                delay(ELIMINATION_SPEED)
+            }
+
+            placeTokenOnSpot(
+                ludoMap.players[playerNo].tokens[tokenNo].tokenImage,
+                ludoMap.restingPlaces[playerNo].spots[tokenNo].pX,
+                ludoMap.restingPlaces[playerNo].spots[tokenNo].pY
+            )
+
+            ludoMap.players[playerNo].tokens[tokenNo].stepsCompleted = 0
+            ludoMap.players[playerNo].tokens[tokenNo].standingAt = -1
+            ludoMap.players[playerNo].tokens[tokenNo].isFree = false
+            ludoMap.players[playerNo].tokens[tokenNo].canMove = false
+        }
+
     }
 
     private fun subscribeObservers() {
