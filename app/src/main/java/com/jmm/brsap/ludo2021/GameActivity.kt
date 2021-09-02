@@ -819,7 +819,64 @@ class GameActivity : AppCompatActivity() {
     }
 
     private fun placeTokens() {
-        for (place in ludoMap.restingPlaces) {
+        when(playersCount){
+            2->{
+                for (i in 0..3){
+                    ludoMap.players[0].isActive = true
+                    placeTokenOnSpot(ludoMap.players[0].tokens[i].tokenImage,
+                                    ludoMap.restingPlaces[0].spots[i].pX,
+                                    ludoMap.restingPlaces[0].spots[i].pY)
+
+                    ludoMap.players[2].isActive = true
+                    placeTokenOnSpot(ludoMap.players[2].tokens[i].tokenImage,
+                        ludoMap.restingPlaces[2].spots[i].pX,
+                        ludoMap.restingPlaces[2].spots[i].pY)
+                }
+
+            }
+            3->{
+                for (i in 0..3){
+                    ludoMap.players[0].isActive = true
+                    placeTokenOnSpot(ludoMap.players[0].tokens[i].tokenImage,
+                        ludoMap.restingPlaces[0].spots[i].pX,
+                        ludoMap.restingPlaces[0].spots[i].pY)
+
+                    ludoMap.players[1].isActive = true
+                    placeTokenOnSpot(ludoMap.players[1].tokens[i].tokenImage,
+                        ludoMap.restingPlaces[1].spots[i].pX,
+                        ludoMap.restingPlaces[1].spots[i].pY)
+
+                    ludoMap.players[2].isActive = true
+                    placeTokenOnSpot(ludoMap.players[2].tokens[i].tokenImage,
+                        ludoMap.restingPlaces[2].spots[i].pX,
+                        ludoMap.restingPlaces[2].spots[i].pY)
+                }
+            }
+            4->{
+                for (i in 0..3){
+                    ludoMap.players[0].isActive = true
+                    placeTokenOnSpot(ludoMap.players[0].tokens[i].tokenImage,
+                        ludoMap.restingPlaces[0].spots[i].pX,
+                        ludoMap.restingPlaces[0].spots[i].pY)
+
+                    ludoMap.players[1].isActive = true
+                    placeTokenOnSpot(ludoMap.players[1].tokens[i].tokenImage,
+                        ludoMap.restingPlaces[1].spots[i].pX,
+                        ludoMap.restingPlaces[1].spots[i].pY)
+
+                    ludoMap.players[2].isActive = true
+                    placeTokenOnSpot(ludoMap.players[2].tokens[i].tokenImage,
+                        ludoMap.restingPlaces[2].spots[i].pX,
+                        ludoMap.restingPlaces[2].spots[i].pY)
+
+                    ludoMap.players[3].isActive = true
+                    placeTokenOnSpot(ludoMap.players[3].tokens[i].tokenImage,
+                        ludoMap.restingPlaces[3].spots[i].pX,
+                        ludoMap.restingPlaces[3].spots[i].pY)
+                }
+            }
+        }
+        /*for (place in ludoMap.restingPlaces) {
             when (place.color) {
                 PlayerColors.YELLOW -> {
                     for (spot in place.spots) {
@@ -901,7 +958,7 @@ class GameActivity : AppCompatActivity() {
                     }
                 }
             }
-        }
+        }*/
     }
 
     private fun placeDice() {
